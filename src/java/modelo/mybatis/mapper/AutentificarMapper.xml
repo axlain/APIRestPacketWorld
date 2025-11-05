@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace = "autentificar" >
+    <select id="administrador" parameterType = "map" resultType = "pojo.Colaborador">
+        SELECT 
+        c.id_colaborador,
+        c.nombre,
+        c.apellido_paterno,
+        c.apellido_materno,
+        c.numero_personal,
+        c.correo,
+        c.id_rol,
+        r.nombre AS rol,
+        s.id_sucursal,
+        s.codigo AS codigo_sucursal,
+        s.nombre_corto AS nombre_sucursal,
+        s.calle AS calle_sucursal,
+        s.numero AS numero_sucursal,
+        s.colonia AS colonia_sucursal,
+        s.codigo_postal AS codigo_postal_sucursal,
+        s.ciudad AS ciudad_sucursal,
+        s.estado AS estado_sucursal
+        FROM colaborador AS c
+        INNER JOIN rol AS r 
+        ON r.id_rol = c.id_rol
+        INNER JOIN sucursal AS s 
+        ON s.id_sucursal = c.id_sucursal
+        WHERE c.numero_personal = #{numero_personal}  
+        AND c.contrasena = #{contrasena}; 
+
+    </select>
+
+
+</mapper>
+
+
+
