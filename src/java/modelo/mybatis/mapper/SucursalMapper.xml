@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace = "sucursal" >
+    <select id="obtener-todos"  resultType = "pojo.Sucursal">
+        SELECT 
+            s.id_sucursal AS idSucursal,
+            s.codigo AS codigo,
+            s.nombre_corto AS nombreCorto,
+            s.calle AS calle,
+            s.numero AS numero,
+
+            s.id_pais AS idPais,
+            p.nombre AS pais,
+
+            s.id_estado AS idEstado,
+            e.nombre AS estado,
+
+            s.id_municipio AS idMunicipio,
+            m.nombre AS municipio,
+
+            s.id_colonia AS idColonia,
+            c.nombre AS colonia,
+            c.codigo_postal AS codigoPostal,
+
+            s.id_estatus_sucursal AS idEstatusSucursal,
+            es.estatus AS estatusSucursal 
+
+        FROM sucursal AS s 
+        LEFT JOIN pais AS p ON s.id_pais = p.id_pais  
+        LEFT JOIN estado AS e ON s.id_estado = e.id_estado  
+        LEFT JOIN municipio AS m ON s.id_municipio = m.id_municipio  
+        LEFT JOIN colonia AS c ON s.id_colonia = c.id_colonia  
+        LEFT JOIN estatus_sucursal AS es ON s.id_estatus_sucursal = es.id_estatus_sucursal  
+        ORDER BY s.id_sucursal; 
+    </select>
+    
+    <select id="obtener-datos-direccion-por-codigopostal" parameterType="string" resultType="map">
+        SELECT 
+            c.id_colonia,
+            m.id_municipio,
+            e.id_estado,
+            p.id_pais 
+        FROM colonia AS c 
+        INNER JOIN municipio AS m ON c.codigo_municipio = m.codigo 
+        INNER JOIN estado AS e ON m.id_estado = e.id_estado 
+        INNER JOIN pais AS p ON e.id_pais = p.id_pais 
+        WHERE c.codigo_postal = #{codigo_postal} 
+        LIMIT 1;
+    </select>
+    
+    <select id="contar-sucursales-por-municipio" parameterType="int" resultType="int">
+        SELECT COUNT(*) 
+        FROM sucursal 
+        WHERE id_municipio = #{idMunicipio};
+    </select>
+
+    <select id="obtener-datos-municipio" parameterType="int" resultType="map">
+        SELECT 
+            m.codigo AS codigoMunicipio,
+            m.nombre AS nombreMunicipio
+        FROM municipio AS m
+        WHERE m.id_municipio = #{idMunicipio}
+        LIMIT 1;
+    </select>
+
+
+    <insert id="registrar" parameterType="pojo.Sucursal">
+        INSERT INTO sucursal (
+            codigo, nombre_corto, calle, numero,
+            id_pais, id_estado, id_municipio, id_colonia, id_estatus_sucursal
+        ) VALUES (
+            #{codigo}, #{nombreCorto}, #{calle}, #{numero},
+            #{idPais}, #{idEstado}, #{idMunicipio}, #{idColonia}, 1
+        );
+    </insert>
+    
+    <select id="obtener-estatus-sucursal" parameterType="int" resultType="int">
+        SELECT id_estatus_sucursal
+        FROM sucursal
+        WHERE id_sucursal = #{idSucursal}
+        LIMIT 1;
+    </select>
+
+    <update id="editar" parameterType="pojo.Sucursal">
+        UPDATE sucursal 
+        SET 
+            nombre_corto = #{nombreCorto},
+            calle = #{calle},
+            numero = #{numero},
+            id_pais = #{idPais},
+            id_estado = #{idEstado},
+            id_municipio = #{idMunicipio},
+            id_colonia = #{idColonia} 
+        WHERE id_sucursal = #{idSucursal};
+    </update>
+    
+    <select id="verificar-dependencias-sucursal" parameterType="int" resultType="int">
+        SELECT 
+            (SELECT COUNT(*) FROM colaborador WHERE id_sucursal = #{idSucursal}) +
+            (SELECT COUNT(*) FROM unidad WHERE id_sucursal = #{idSucursal}) AS total_dependencias;
+    </select>
+    
+    <update id="dar-baja" parameterType="int">
+        UPDATE sucursal 
+        SET id_estatus_sucursal = 2 
+        WHERE id_sucursal = #{idSucursal};
+    </update>
+
+
+
+</mapper>
+
+
+

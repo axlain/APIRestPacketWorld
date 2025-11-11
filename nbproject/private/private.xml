@@ -3,8 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/alasn/Desktop/paqueteria/APIRestPacketWorld/src/java/modelo/mybatis/mapper/AutentificarMapper.xml</file>
-            <file>file:/C:/Users/alasn/Desktop/paqueteria/APIRestPacketWorld/src/java/modelo/mybatis/mybatis-config.xml</file>
+            <file>file:/C:/Users/alasn/Desktop/paqueteria/APIRestPacketWorld/src/java/dominio/SucursalImp.java</file>
+            <file>file:/C:/Users/alasn/Desktop/paqueteria/APIRestPacketWorld/src/java/modelo/mybatis/mapper/SucursalMapper.xml</file>
+            <file>file:/C:/Users/alasn/Desktop/paqueteria/APIRestPacketWorld/src/java/ws/SucursalWS.java</file>
         </group>
     </open-files>
 </project-private>
