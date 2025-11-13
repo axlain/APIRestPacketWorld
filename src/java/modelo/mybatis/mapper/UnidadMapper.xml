@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="unidad">
+    <select id="obtener-todos" resultType="pojo.Unidad">
+        SELECT 
+           u.id_unidad AS idUnidad,
+           u.marca AS marca,
+           u.modelo AS modelo,
+           u.anio AS anio,
+           u.vin AS vin,
+           u.numero_interno AS numeroInterno,
+           u.motivo_baja AS motivoBaja,
+
+           u.id_tipo_unidad AS idTipoUnidad,
+           tu.nombre AS tipoUnidad,
+
+           u.id_sucursal AS idSucursal,
+           s.codigo AS codigoSucursal,
+
+           u.id_estatus_unidad AS idEstatusUnidad,
+           eu.estatus AS estatusUnidad,
+
+           c.id_colaborador AS idConductor,
+           c.numero_personal AS numeroPersonalConductor
+
+        FROM unidad AS u 
+        INNER JOIN tipo_unidad AS tu ON u.id_tipo_unidad = tu.id_tipo_unidad 
+        LEFT JOIN sucursal AS s ON u.id_sucursal = s.id_sucursal 
+        INNER JOIN estatus_unidad AS eu ON u.id_estatus_unidad = eu.id_estatus_unidad 
+
+        LEFT JOIN colaborador AS c ON c.id_unidad = u.id_unidad 
+        AND c.id_rol = 3  
+
+        ORDER BY u.id_unidad;
+    </select>
+    
+    <select id="verificar-sucursal-activa" parameterType="pojo.Sucursal" resultType="int">
+        SELECT COUNT(*)   
+        FROM sucursal    
+        WHERE id_sucursal = #{idSucursal}  
+          AND id_estatus_sucursal = 1; 
+    </select>
+
+    <insert id="registrar" parameterType="pojo.Unidad">
+        INSERT INTO unidad (marca,modelo, anio,vin,numero_interno,id_tipo_unidad,id_sucursal,id_estatus_unidad)
+        VALUES (#{marca}, #{modelo}, #{anio}, #{vin}, #{numeroInterno}, #{idTipoUnidad}, #{idSucursal}, #{idEstatusUnidad});
+    </insert>
+    
+    <update id="editar" parameterType="pojo.Unidad">
+        UPDATE unidad
+        SET
+            marca = #{marca},
+            modelo = #{modelo},
+            anio = #{anio},
+            id_tipo_unidad = #{idTipoUnidad},
+            id_sucursal = #{idSucursal}
+        WHERE id_unidad = #{idUnidad};
+    </update>
+
+    <select id="obtener-estatus-unidad" parameterType="int" resultType="int">
+        SELECT id_estatus_unidad
+        FROM unidad
+        WHERE id_unidad = #{idUnidad};
+    </select>
+    
+    <select id="unidad-tiene-conductor" parameterType="int" resultType="int">
+        SELECT COUNT(*) 
+        FROM colaborador 
+        WHERE id_unidad = #{idUnidad};
+    </select>
+
+    <update id="dar-baja" parameterType="map">
+        UPDATE unidad 
+        SET motivo_baja = #{motivoBaja},
+            id_estatus_unidad = 2
+        WHERE id_unidad = #{idUnidad}
+          AND id_estatus_unidad = 1;
+    </update>
+
+
+    
+
+</mapper>

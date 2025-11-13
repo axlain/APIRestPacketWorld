@@ -1,20 +1,21 @@
 package pojo;
 
 public class Colaborador {
-    private int id_colaborador;
+    private int idColaborador;
     private String nombre; 
-    private String apellido_materno; 
+    private String apellidoPaterno; 
+    private String apellidoMaterno; 
     private String curp; 
     private String correo; 
-    private String numero_personal; 
+    private String numeroPersonal; 
     private String contrasena; 
-    private String numero_licencia; 
+    private String numeroLicencia; 
     
-    private int id_rol;
+    private int idRol;
     private String rol; 
-    private int id_sucursal;
+    private int idSucursal;
     private String sucursal; 
-    private int id_unidad;
+    private int idUnidad;
     private String unidad; 
     
     private byte[] foto; 
@@ -23,33 +24,40 @@ public class Colaborador {
     public Colaborador() {
     }
 
-    public Colaborador(int id_colaborador, String nombre, String apellido_materno, String curp, String correo, String numero_personal, String contrasena, String numero_licencia, int id_rol, String rol, int id_sucursal, String sucursal, int id_unidad, String unidad) {
-        this.id_colaborador = id_colaborador;
+    public Colaborador(int idColaborador, String nombre, String apellidoPaterno, String apellidoMaterno, String curp, String correo, String numeroPersonal, String contrasena, String numeroLicencia, int idRol, String rol, int idSucursal, String sucursal, int idUnidad, String unidad, byte[] foto, String fotoBase64) {
+        this.idColaborador = idColaborador;
         this.nombre = nombre;
-        this.apellido_materno = apellido_materno;
+        this.apellidoPaterno = apellidoPaterno;
+        this.apellidoMaterno = apellidoMaterno;
         this.curp = curp;
         this.correo = correo;
-        this.numero_personal = numero_personal;
+        this.numeroPersonal = numeroPersonal;
         this.contrasena = contrasena;
-        this.numero_licencia = numero_licencia;
-        this.id_rol = id_rol;
+        this.numeroLicencia = numeroLicencia;
+        this.idRol = idRol;
         this.rol = rol;
-        this.id_sucursal = id_sucursal;
+        this.idSucursal = idSucursal;
         this.sucursal = sucursal;
-        this.id_unidad = id_unidad;
+        this.idUnidad = idUnidad;
         this.unidad = unidad;
+        this.foto = foto;
+        this.fotoBase64 = fotoBase64;
     }
 
-    public int getId_colaborador() {
-        return id_colaborador;
+    public int getIdColaborador() {
+        return idColaborador;
     }
 
     public String getNombre() {
         return nombre;
     }
 
-    public String getApellido_materno() {
-        return apellido_materno;
+    public String getApellidoPaterno() {
+        return apellidoPaterno;
+    }
+
+    public String getApellidoMaterno() {
+        return apellidoMaterno;
     }
 
     public String getCurp() {
@@ -60,36 +68,36 @@ public class Colaborador {
         return correo;
     }
 
-    public String getNumero_personal() {
-        return numero_personal;
+    public String getNumeroPersonal() {
+        return numeroPersonal;
     }
 
     public String getContrasena() {
         return contrasena;
     }
 
-    public String getNumero_licencia() {
-        return numero_licencia;
+    public String getNumeroLicencia() {
+        return numeroLicencia;
     }
 
-    public int getId_rol() {
-        return id_rol;
+    public int getIdRol() {
+        return idRol;
     }
 
     public String getRol() {
         return rol;
     }
 
-    public int getId_sucursal() {
-        return id_sucursal;
+    public int getIdSucursal() {
+        return idSucursal;
     }
 
     public String getSucursal() {
         return sucursal;
     }
 
-    public int getId_unidad() {
-        return id_unidad;
+    public int getIdUnidad() {
+        return idUnidad;
     }
 
     public String getUnidad() {
@@ -104,16 +112,20 @@ public class Colaborador {
         return fotoBase64;
     }
 
-    public void setId_colaborador(int id_colaborador) {
-        this.id_colaborador = id_colaborador;
+    public void setIdColaborador(int idColaborador) {
+        this.idColaborador = idColaborador;
     }
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
 
-    public void setApellido_materno(String apellido_materno) {
-        this.apellido_materno = apellido_materno;
+    public void setApellidoPaterno(String apellidoPaterno) {
+        this.apellidoPaterno = apellidoPaterno;
+    }
+
+    public void setApellidoMaterno(String apellidoMaterno) {
+        this.apellidoMaterno = apellidoMaterno;
     }
 
     public void setCurp(String curp) {
@@ -124,36 +136,36 @@ public class Colaborador {
         this.correo = correo;
     }
 
-    public void setNumero_personal(String numero_personal) {
-        this.numero_personal = numero_personal;
+    public void setNumeroPersonal(String numeroPersonal) {
+        this.numeroPersonal = numeroPersonal;
     }
 
     public void setContrasena(String contrasena) {
         this.contrasena = contrasena;
     }
 
-    public void setNumero_licencia(String numero_licencia) {
-        this.numero_licencia = numero_licencia;
+    public void setNumeroLicencia(String numeroLicencia) {
+        this.numeroLicencia = numeroLicencia;
     }
 
-    public void setId_rol(int id_rol) {
-        this.id_rol = id_rol;
+    public void setIdRol(int idRol) {
+        this.idRol = idRol;
     }
 
     public void setRol(String rol) {
         this.rol = rol;
     }
 
-    public void setId_sucursal(int id_sucursal) {
-        this.id_sucursal = id_sucursal;
+    public void setIdSucursal(int idSucursal) {
+        this.idSucursal = idSucursal;
     }
 
     public void setSucursal(String sucursal) {
         this.sucursal = sucursal;
     }
 
-    public void setId_unidad(int id_unidad) {
-        this.id_unidad = id_unidad;
+    public void setIdUnidad(int idUnidad) {
+        this.idUnidad = idUnidad;
     }
 
     public void setUnidad(String unidad) {
@@ -167,6 +179,7 @@ public class Colaborador {
     public void setFotoBase64(String fotoBase64) {
         this.fotoBase64 = fotoBase64;
     }
+
     
     
 }

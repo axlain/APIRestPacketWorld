@@ -1,1 +1,108 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="colaborador">
+    <select id="obtener-todos" resultType="pojo.Colaborador">
+        SELECT 
+            c.id_colaborador AS idColaborador,
+            c.numero_personal AS numeroPersonal,
+            c.curp AS curp,
+            c.nombre AS nombre,
+            c.apellido_paterno AS apellidoPaterno,
+            c.apellido_materno AS apellidoMaterno,
+            c.correo AS correo,
+
+            c.id_rol AS idRol,
+            r.nombre AS rol,
+
+            c.id_sucursal AS idSucursal,
+            s.nombre_corto AS sucursal,
+
+            c.id_unidad AS idUnidad,
+
+            CASE 
+                WHEN r.nombre = 'Conductor' THEN c.numero_licencia
+                ELSE NULL
+            END AS numeroLicencia
+
+        FROM colaborador AS c
+        INNER JOIN rol AS r ON c.id_rol = r.id_rol
+        INNER JOIN sucursal AS s ON c.id_sucursal = s.id_sucursal
+        ORDER BY c.id_colaborador;
+    </select>
+    
+    <select id="verificar-curp" parameterType="string" resultType="int">
+        SELECT COUNT(*) 
+        FROM colaborador
+        WHERE curp = #{curp};
+    </select>
+    
+    <select id="verificar-licencia" parameterType="string" resultType="int">
+        SELECT COUNT(*) 
+        FROM colaborador
+        WHERE numero_licencia = #{numeroLicencia};
+    </select>
+    <insert id="registrar" parameterType="pojo.Colaborador">
+        INSERT INTO colaborador (
+            nombre,apellido_paterno,apellido_materno,curp,correo,numero_personal,contrasena, numero_licencia,id_rol,id_sucursal)
+        VALUES (
+            #{nombre}, #{apellidoPaterno}, #{apellidoMaterno}, #{curp},#{correo},#{numeroPersonal},#{contrasena},#{numeroLicencia},#{idRol},#{idSucursal});
+    </insert>
+    
+    <select id="verificar-existe" parameterType="int" resultType="int">
+        SELECT COUNT(*) 
+        FROM colaborador
+        WHERE id_colaborador = #{idColaborador};
+    </select>
+    
+    <update id="editar" parameterType="pojo.Colaborador">
+        UPDATE colaborador
+        SET
+            nombre = #{nombre},
+            apellido_paterno = #{apellidoPaterno},
+            apellido_materno = #{apellidoMaterno},
+            curp = #{curp},
+            correo = #{correo},
+            numero_licencia = #{numeroLicencia},
+            id_sucursal = #{idSucursal}
+        WHERE id_colaborador = #{idColaborador};
+    </update>
+
+
+    <delete id="eliminar" parameterType="int">
+        DELETE FROM colaborador
+        WHERE id_colaborador = #{idColaborador};
+    </delete>
+
+    <select id="obtener-rol-colaborador" parameterType="int" resultType="int">
+        SELECT id_rol
+        FROM colaborador
+        WHERE id_colaborador = #{idColaborador};
+    </select>
+
+    <select id="obtener-unidad-asignada" parameterType="int" resultType="int">
+        SELECT id_unidad
+        FROM colaborador
+        WHERE id_colaborador = #{idColaborador};
+    </select>
+    
+    <select id="unidad-asignada-a-otro" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM colaborador
+        WHERE id_unidad = #{idUnidad};
+    </select>
+    
+    <update id="asignar-unidad" parameterType="map">
+        UPDATE colaborador
+        SET id_unidad = #{idUnidad}
+        WHERE id_colaborador = #{idColaborador};
+    </update>
+
+    <update id="desasignar-unidad" parameterType="int">
+        UPDATE colaborador
+        SET id_unidad = NULL
+        WHERE id_colaborador = #{idColaborador};
+    </update>
+
+</mapper>
