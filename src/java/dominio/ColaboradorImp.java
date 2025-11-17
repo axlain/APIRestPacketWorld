@@ -35,39 +35,33 @@ public class ColaboradorImp {
 
         if (conexionBD != null) {
             try {
-                // 1️⃣ Verificar CURP duplicada
                 Integer existeCurp = conexionBD.selectOne("colaborador.verificar-curp", colaborador.getCurp());
                 if (existeCurp != null && existeCurp > 0) {
                     respuesta.setMensaje("Ya existe un colaborador con la CURP ingresada.");
                     return respuesta;
                 }
 
-                // 2️⃣ Validar que la sucursal esté activa
                 Integer estatusSucursal = conexionBD.selectOne("sucursal.obtener-estatus-sucursal", colaborador.getIdSucursal());
                 if (estatusSucursal == null || estatusSucursal != Constantes.ESTATUS_ACTIVO) {
                     respuesta.setMensaje("No se puede registrar el colaborador. La sucursal seleccionada no está activa.");
                     return respuesta;
                 }
 
-                // 3️⃣ Validar número de licencia si es conductor
-                if (colaborador.getIdRol() == 3) { // 3 = Conductor
+                if (colaborador.getIdRol() == 3) { 
                     if (colaborador.getNumeroLicencia() == null || colaborador.getNumeroLicencia().trim().isEmpty()) {
                         respuesta.setMensaje("Debe ingresar un número de licencia para los conductores.");
                         return respuesta;
                     }
 
-                    // Verificar que la licencia no esté repetida
                     Integer existeLicencia = conexionBD.selectOne("colaborador.verificar-licencia", colaborador.getNumeroLicencia());
                     if (existeLicencia != null && existeLicencia > 0) {
                         respuesta.setMensaje("Ya existe un conductor con el número de licencia ingresado.");
                         return respuesta;
                     }
                 } else {
-                    // Si no es conductor, no se guarda licencia
                     colaborador.setNumeroLicencia(null);
                 }
 
-                // 4️⃣ Generar número de personal
                 String numeroPersonal = generarNumeroPersonal(colaborador.getCurp(), colaborador.getContrasena());
                 if (numeroPersonal == null) {
                     respuesta.setMensaje("No se pudo generar el número de personal. Verifique los datos.");
@@ -75,7 +69,6 @@ public class ColaboradorImp {
                 }
                 colaborador.setNumeroPersonal(numeroPersonal.toUpperCase());
 
-                // 5️⃣ Registrar en la BD
                 int filasAfectadas = conexionBD.insert("colaborador.registrar", colaborador);
                 conexionBD.commit();
 
@@ -225,36 +218,27 @@ public class ColaboradorImp {
         if (conexionBD != null) {
             try {
 
-                // 1️⃣ Validar colaborador y rol
                 String error = verificarColaboradorExisteYEsConductor(conexionBD, idColaborador);
                 if (error != null) {
                     respuesta.setMensaje(error);
                     return respuesta;
                 }
 
-                // 2️⃣ Si idUnidad es null → desasignar unidad
                 if (idUnidad == null) {
                     return desasignarUnidad(conexionBD, idColaborador);
                 }
-
-                // 3️⃣ Validar unidad activa
                 error = verificarUnidadActiva(conexionBD, idUnidad);
                 if (error != null) {
                     respuesta.setMensaje(error);
                     return respuesta;
                 }
 
-                // 4️⃣ Obtener unidad actual del colaborador
                 Integer unidadActual = obtenerUnidadActual(conexionBD, idColaborador);
-
-                // 5️⃣ Validar si la unidad está ocupada
                 error = unidadEstaOcupadaPorOtro(conexionBD, idUnidad, unidadActual);
                 if (error != null) {
                     respuesta.setMensaje(error);
                     return respuesta;
                 }
-
-                // 6️⃣ Asignar la unidad
                 respuesta = asignarUnidadAConductor(conexionBD, idColaborador, idUnidad);
 
             } catch (Exception e) {
@@ -347,15 +331,12 @@ public class ColaboradorImp {
     
     private static String verificarUnidadActiva(SqlSession conexionBD, int idUnidad) {
         Integer estatus = conexionBD.selectOne("unidad.obtener-estatus-unidad", idUnidad);
-
         if (estatus == null) {
             return "La unidad no existe.";
         }
-
         if (estatus != Constantes.ESTATUS_ACTIVO) {
             return "La unidad está inactiva, no se puede asignar.";
         }
-
         return null;
     }
 

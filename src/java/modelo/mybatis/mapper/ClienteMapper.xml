@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cliente">
+    <select id="obtener-todos" resultType="pojo.Cliente">
+        SELECT 
+            c.id_cliente AS idCliente,
+            c.nombre AS nombre,
+            c.apellido_paterno AS apellidoPaterno,
+            c.apellido_materno AS apellidoMaterno,
+            c.calle AS calle,
+            c.numero AS numero,
+            c.telefono AS telefono,
+            c.correo AS correo,
+
+            c.id_pais AS idPais,
+            p.nombre AS pais,
+
+            c.id_estado AS idEstado,
+            e.nombre AS estado,
+
+            c.id_municipio AS idMunicipio,
+            m.nombre AS municipio,
+
+            c.id_colonia AS idColonia,
+            co.nombre AS colonia
+
+        FROM cliente AS c
+        LEFT JOIN pais AS p ON c.id_pais = p.id_pais
+        LEFT JOIN estado AS e ON c.id_estado = e.id_estado
+        LEFT JOIN municipio AS m ON c.id_municipio = m.id_municipio
+        LEFT JOIN colonia AS co ON c.id_colonia = co.id_colonia
+
+        ORDER BY c.id_cliente;
+    </select>
+    
+    
+    <insert id="registrar" parameterType="pojo.Cliente">
+        INSERT INTO cliente (nombre, apellido_paterno, apellido_materno, calle, numero, telefono, correo, id_pais, id_estado, id_municipio, id_colonia)
+        VALUES (#{nombre}, #{apellidoPaterno}, #{apellidoMaterno}, #{calle}, #{numero}, #{telefono}, #{correo}, #{idPais}, #{idEstado}, #{idMunicipio}, #{idColonia});
+    </insert>
+
+    
+
+</mapper>
