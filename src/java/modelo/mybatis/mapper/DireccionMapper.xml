@@ -4,7 +4,7 @@
 
 <mapper namespace="direccion">
 
-    <select id="obtener-datos-por-cp" parameterType="string" resultType="dto.DatosCPDTO">
+    <select id="obtener-datos-por-cp" parameterType="string" resultType="dto.DatosCodigoPostalDTO">
         SELECT DISTINCT
             p.id_pais AS idPais,
             p.nombre AS pais,
@@ -29,7 +29,7 @@
         WHERE codigo_postal = #{codigoPostal};
     </select>
 
-    <select id="obtener-municipio" parameterType="int" resultType="dto.DatosCPDTO">
+    <select id="obtener-municipio" parameterType="int" resultType="dto.DatosCodigoPostalDTO">
         SELECT 
             id_municipio AS idMunicipio,
             nombre AS municipio

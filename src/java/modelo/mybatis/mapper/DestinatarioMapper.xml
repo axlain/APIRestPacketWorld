@@ -15,15 +15,11 @@
             d.id_pais AS idPais,
             d.id_estado AS idEstado,
             d.id_municipio AS idMunicipio,
-            d.id_colonia AS idColonia
-        FROM destinatario AS d
+            d.id_colonia AS idColonia,
+            c.codigo_postal AS codigoPostal
+        FROM destinatario d
+        INNER JOIN colonia c ON c.id_colonia = d.id_colonia
         ORDER BY d.id_destinatario;
-    </select>
-
-    <select id="verificar-existe" parameterType="int" resultType="int">
-        SELECT COUNT(*)
-        FROM destinatario
-        WHERE id_destinatario = #{idDestinatario};
     </select>
 
     <select id="obtener-por-id" parameterType="int" resultType="pojo.Destinatario">
@@ -37,10 +33,17 @@
             d.id_pais AS idPais,
             d.id_estado AS idEstado,
             d.id_municipio AS idMunicipio,
-            d.id_colonia AS idColonia
-        FROM destinatario AS d
+            d.id_colonia AS idColonia,
+            c.codigo_postal AS codigoPostal
+        FROM destinatario d
+        INNER JOIN colonia c ON c.id_colonia = d.id_colonia
         WHERE d.id_destinatario = #{idDestinatario}
-        LIMIT 1;
+    </select>
+
+    <select id="verificar-existe" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM destinatario
+        WHERE id_destinatario = #{idDestinatario};
     </select>
 
     <insert id="registrar" parameterType="pojo.Destinatario">

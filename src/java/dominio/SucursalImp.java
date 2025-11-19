@@ -1,7 +1,7 @@
 package dominio;
 
 import dto.ColoniaDTO;
-import dto.DatosCPDTO;
+import dto.DatosCodigoPostalDTO;
 import dto.DireccionCompletaDTO;
 import dto.Respuesta;
 import java.util.List;
@@ -154,7 +154,7 @@ public class SucursalImp {
     private static boolean completarDireccionDesdeCP(Sucursal sucursal, Respuesta respuesta) {
 
         // Obtener la dirección base del CP (país, estado, municipio)
-        DatosCPDTO datos = DireccionImp.obtenerDatosPorCP(sucursal.getCodigoPostal());
+        DatosCodigoPostalDTO datos = DireccionImp.obtenerDatosPorCP(sucursal.getCodigoPostal());
 
         if (datos == null || datos.isError()) {
             respuesta.setMensaje(datos != null ? datos.getMensaje() :
@@ -189,7 +189,7 @@ public class SucursalImp {
 
     private static String generarCodigoSucursal(SqlSession conexionBD, Sucursal sucursal) {
 
-        DatosCPDTO municipio = DireccionImp.obtenerMunicipioPorId(sucursal.getIdMunicipio());
+        DatosCodigoPostalDTO municipio = DireccionImp.obtenerMunicipioPorId(sucursal.getIdMunicipio());
 
         if (municipio == null || municipio.isError()) {
             throw new RuntimeException("No se encontró información del municipio.");

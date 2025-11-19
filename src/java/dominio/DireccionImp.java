@@ -1,7 +1,7 @@
 package dominio;
 
 import dto.ColoniaDTO;
-import dto.DatosCPDTO;
+import dto.DatosCodigoPostalDTO;
 import java.util.ArrayList;
 import java.util.List;
 import modelo.mybatis.MyBatisUtil;
@@ -9,13 +9,13 @@ import org.apache.ibatis.session.SqlSession;
 
 public class DireccionImp {
 
-    public static DatosCPDTO obtenerDatosPorCP(String codigoPostal) {
-        DatosCPDTO respuesta = new DatosCPDTO();
+    public static DatosCodigoPostalDTO obtenerDatosPorCP(String codigoPostal) {
+        DatosCodigoPostalDTO respuesta = new DatosCodigoPostalDTO();
         SqlSession conexionBD = MyBatisUtil.getSession();
 
         if (conexionBD != null) {
             try {
-                DatosCPDTO datos = conexionBD.selectOne("direccion.obtener-datos-por-cp", codigoPostal);
+                DatosCodigoPostalDTO datos = conexionBD.selectOne("direccion.obtener-datos-por-cp", codigoPostal);
 
                 if (datos != null) {
                     datos.setError(false);
@@ -69,13 +69,13 @@ public class DireccionImp {
         return lista;
     }
     
-    public static DatosCPDTO obtenerMunicipioPorId(int idMunicipio) {
-        DatosCPDTO respuesta = new DatosCPDTO();
+    public static DatosCodigoPostalDTO obtenerMunicipioPorId(int idMunicipio) {
+        DatosCodigoPostalDTO respuesta = new DatosCodigoPostalDTO();
         SqlSession conexionBD = MyBatisUtil.getSession();
 
         if (conexionBD != null) {
             try {
-                DatosCPDTO datos = conexionBD.selectOne("direccion.obtener-municipio", idMunicipio);
+                DatosCodigoPostalDTO datos = conexionBD.selectOne("direccion.obtener-municipio", idMunicipio);
 
                 if (datos != null) {
                     datos.setError(false);

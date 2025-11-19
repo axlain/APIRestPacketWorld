@@ -1,5 +1,7 @@
 package dominio;
 
+import dto.ColoniaDTO;
+import dto.DatosCodigoPostalDTO;
 import dto.Respuesta;
 import java.util.List;
 import modelo.mybatis.MyBatisUtil;
@@ -25,7 +27,7 @@ public class DestinatarioImp {
         return lista;
     }
 
-    public static Respuesta registrarDestinatario(Destinatario d) {
+    public static Respuesta registrarDestinatario(Destinatario destinatario) {
         Respuesta r = new Respuesta();
         r.setError(true);
 
@@ -33,7 +35,12 @@ public class DestinatarioImp {
 
         if (conexion != null) {
             try {
-                int filas = conexion.insert("destinatario.registrar", d);
+                // Validar CP + COLONIA y completar datos faltantes
+                if (!completarDireccionDesdeCP(destinatario, r)) {
+                    return r;
+                }
+
+                int filas = conexion.insert("destinatario.registrar", destinatario);
                 conexion.commit();
 
                 if (filas > 0) {
@@ -55,7 +62,7 @@ public class DestinatarioImp {
         return r;
     }
 
-    public static Respuesta editarDestinatario(Destinatario d) {
+    public static Respuesta editarDestinatario(Destinatario destinatario) {
         Respuesta r = new Respuesta();
         r.setError(true);
 
@@ -63,13 +70,21 @@ public class DestinatarioImp {
 
         if (conexion != null) {
             try {
-                Integer existe = conexion.selectOne("destinatario.verificar-existe", d.getIdDestinatario());
+
+                Integer existe = conexion.selectOne("destinatario.verificar-existe", destinatario.getIdDestinatario());
                 if (existe == null || existe == 0) {
                     r.setMensaje("El destinatario no existe.");
                     return r;
                 }
 
-                int filas = conexion.update("destinatario.editar", d);
+                // Si envía un nuevo CP, validar y completar datos
+                if (destinatario.getCodigoPostal() != null && !destinatario.getCodigoPostal().isEmpty()) {
+                    if (!completarDireccionDesdeCP(destinatario, r)) {
+                        return r;
+                    }
+                }
+
+                int filas = conexion.update("destinatario.editar", destinatario);
                 conexion.commit();
 
                 if (filas > 0) {
@@ -125,5 +140,41 @@ public class DestinatarioImp {
         }
 
         return r;
+    }
+
+    private static boolean completarDireccionDesdeCP(Destinatario destinatario, Respuesta respuesta) {
+
+        // Obtener datos base (país, estado, municipio)
+        DatosCodigoPostalDTO datos = DireccionImp.obtenerDatosPorCP(destinatario.getCodigoPostal());
+
+        if (datos == null || datos.isError()) {
+            respuesta.setMensaje(datos != null ? datos.getMensaje() :
+                    "No se encontró información del código postal ingresado.");
+            return false;
+        }
+
+        // Obtener todas las colonias del CP
+        List<ColoniaDTO> colonias = DireccionImp.obtenerColoniasPorCP(destinatario.getCodigoPostal());
+
+        if (colonias == null || colonias.isEmpty()) {
+            respuesta.setMensaje("El código postal no tiene colonias registradas.");
+            return false;
+        }
+
+        // Validar colonia
+        boolean coloniaValida = colonias.stream()
+                .anyMatch(c -> c.getIdColonia().equals(destinatario.getIdColonia()));
+
+        if (!coloniaValida) {
+            respuesta.setMensaje("La colonia seleccionada NO pertenece al código postal ingresado.");
+            return false;
+        }
+
+        // Asignar a POJO
+        destinatario.setIdPais(datos.getIdPais());
+        destinatario.setIdEstado(datos.getIdEstado());
+        destinatario.setIdMunicipio(datos.getIdMunicipio());
+
+        return true;
     }
 }

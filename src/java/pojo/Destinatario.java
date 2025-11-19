@@ -8,13 +8,13 @@ public class Destinatario {
     private String calle;
     private String numero;
 
-    private int idPais;
+    private Integer idPais;
     private String pais;
-    private int idEstado;
+    private Integer idEstado;
     private String estado;
-    private int idMunicipio;
+    private Integer idMunicipio;
     private String municipio;
-    private int idColonia;
+    private Integer idColonia;
     private String colonia;
 
     private String codigoPostal;
@@ -22,7 +22,7 @@ public class Destinatario {
     public Destinatario() {
     }
 
-    public Destinatario(int idDestinatario, String nombre, String apellidoPaterno, String apellidoMaterno, String calle, String numero, int idPais, String pais, int idEstado, String estado, int idMunicipio, String municipio, int idColonia, String colonia, String codigoPostal) {
+    public Destinatario(int idDestinatario, String nombre, String apellidoPaterno, String apellidoMaterno, String calle, String numero, Integer idPais, String pais, Integer idEstado, String estado, Integer idMunicipio, String municipio, Integer idColonia, String colonia, String codigoPostal) {
         this.idDestinatario = idDestinatario;
         this.nombre = nombre;
         this.apellidoPaterno = apellidoPaterno;
@@ -88,11 +88,11 @@ public class Destinatario {
         this.numero = numero;
     }
 
-    public int getIdPais() {
+    public Integer getIdPais() {
         return idPais;
     }
 
-    public void setIdPais(int idPais) {
+    public void setIdPais(Integer idPais) {
         this.idPais = idPais;
     }
 
@@ -104,11 +104,11 @@ public class Destinatario {
         this.pais = pais;
     }
 
-    public int getIdEstado() {
+    public Integer getIdEstado() {
         return idEstado;
     }
 
-    public void setIdEstado(int idEstado) {
+    public void setIdEstado(Integer idEstado) {
         this.idEstado = idEstado;
     }
 
@@ -120,11 +120,11 @@ public class Destinatario {
         this.estado = estado;
     }
 
-    public int getIdMunicipio() {
+    public Integer getIdMunicipio() {
         return idMunicipio;
     }
 
-    public void setIdMunicipio(int idMunicipio) {
+    public void setIdMunicipio(Integer idMunicipio) {
         this.idMunicipio = idMunicipio;
     }
 
@@ -136,11 +136,11 @@ public class Destinatario {
         this.municipio = municipio;
     }
 
-    public int getIdColonia() {
+    public Integer getIdColonia() {
         return idColonia;
     }
 
-    public void setIdColonia(int idColonia) {
+    public void setIdColonia(Integer idColonia) {
         this.idColonia = idColonia;
     }
 
@@ -159,4 +159,5 @@ public class Destinatario {
     public void setCodigoPostal(String codigoPostal) {
         this.codigoPostal = codigoPostal;
     }
+   
 }

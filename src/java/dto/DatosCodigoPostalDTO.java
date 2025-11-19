@@ -1,6 +1,6 @@
 package dto;
 
-public class DatosCPDTO {
+public class DatosCodigoPostalDTO {
 
     private boolean error;
     private String mensaje;
@@ -16,10 +16,10 @@ public class DatosCPDTO {
 
     private String codigoPostal;
 
-    public DatosCPDTO() {
+    public DatosCodigoPostalDTO() {
     }
 
-    public DatosCPDTO(boolean error, String mensaje, Integer idPais, String pais, Integer idEstado, String estado, Integer idMunicipio, String municipio, String codigoPostal) {
+    public DatosCodigoPostalDTO(boolean error, String mensaje, Integer idPais, String pais, Integer idEstado, String estado, Integer idMunicipio, String municipio, String codigoPostal) {
         this.error = error;
         this.mensaje = mensaje;
         this.idPais = idPais;
