@@ -28,6 +28,11 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         <mapper resource = "modelo/mybatis/mapper/UnidadMapper.xml"/>
         <mapper resource = "modelo/mybatis/mapper/ColaboradorMapper.xml"/>
         <mapper resource = "modelo/mybatis/mapper/ClienteMapper.xml"/>
+        <mapper resource = "modelo/mybatis/mapper/EnvioMapper.xml"/>
+        <mapper resource = "modelo/mybatis/mapper/DestinatarioMapper.xml"/>
+    
+        <mapper resource="modelo/mybatis/mapper/DireccionMapper.xml"/>
+
     </mappers>
 
 </configuration>

@@ -43,6 +43,7 @@
         FROM colaborador
         WHERE numero_licencia = #{numeroLicencia};
     </select>
+    
     <insert id="registrar" parameterType="pojo.Colaborador">
         INSERT INTO colaborador (
             nombre,apellido_paterno,apellido_materno,curp,correo,numero_personal,contrasena, numero_licencia,id_rol,id_sucursal)
@@ -68,7 +69,6 @@
             id_sucursal = #{idSucursal}
         WHERE id_colaborador = #{idColaborador};
     </update>
-
 
     <delete id="eliminar" parameterType="int">
         DELETE FROM colaborador

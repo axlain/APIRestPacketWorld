@@ -1,8 +1,10 @@
 package dominio;
 
+import dto.ColoniaDTO;
+import dto.DatosCPDTO;
+import dto.DireccionCompletaDTO;
 import dto.Respuesta;
 import java.util.List;
-import java.util.Map;
 import modelo.mybatis.MyBatisUtil;
 import org.apache.ibatis.session.SqlSession;
 import pojo.Sucursal;
@@ -23,7 +25,6 @@ public class SucursalImp {
                 conexionBD.close();
             }
         }
-
         return sucursales;
     }
 
@@ -32,34 +33,39 @@ public class SucursalImp {
         respuesta.setError(true);
 
         SqlSession conexionBD = MyBatisUtil.getSession();
+
         if (conexionBD != null) {
             try {
-                if (!completarDireccionDesdeCP(conexionBD, sucursal, respuesta)) {
-                    conexionBD.close();
+                // Validar CP y colonia
+                if (!completarDireccionDesdeCP(sucursal, respuesta)) {
                     return respuesta;
                 }
 
+                // Generar código de sucursal
                 String codigoGenerado = generarCodigoSucursal(conexionBD, sucursal);
                 sucursal.setCodigo(codigoGenerado);
 
-                int filasAfectadas = conexionBD.insert("sucursal.registrar", sucursal);
+                int filas = conexionBD.insert("sucursal.registrar", sucursal);
                 conexionBD.commit();
 
-                if (filasAfectadas > 0) {
+                if (filas > 0) {
                     respuesta.setError(false);
-                    respuesta.setMensaje(Constantes.MSJ_EXITO_REGISTRO + Constantes.SUCURSAL + 
+                    respuesta.setMensaje(Constantes.MSJ_EXITO_REGISTRO + Constantes.SUCURSAL +
                             " con código: " + codigoGenerado);
                 } else {
                     respuesta.setMensaje(Constantes.MSJ_ERROR_REGISTRO + Constantes.SUCURSAL);
                 }
 
             } catch (Exception e) {
-                respuesta.setMensaje("Error al registrar la " + Constantes.SUCURSAL + ": " + e.getMessage());
+                respuesta.setMensaje("Error al registrar la sucursal: " + e.getMessage());
+            } finally {
+                conexionBD.close();
             }
-            conexionBD.close();
+
         } else {
             respuesta.setMensaje(Constantes.MSJ_ERROR_BD);
         }
+
         return respuesta;
     }
 
@@ -68,25 +74,25 @@ public class SucursalImp {
         respuesta.setError(true);
 
         SqlSession conexionBD = MyBatisUtil.getSession();
+
         if (conexionBD != null) {
             try {
                 if (esSucursalInactiva(conexionBD, sucursal.getIdSucursal())) {
-                    respuesta.setMensaje(Constantes.MSJ_ERROR_INACTIVA + Constantes.SUCURSAL + " inactiva");
-                    conexionBD.close();
+                    respuesta.setMensaje(Constantes.MSJ_ERROR_INACTIVA + Constantes.SUCURSAL);
                     return respuesta;
                 }
 
+                // Validar CP solo si se envió un nuevo valor
                 if (sucursal.getCodigoPostal() != null && !sucursal.getCodigoPostal().isEmpty()) {
-                    if (!completarDireccionDesdeCP(conexionBD, sucursal, respuesta)) {
-                        conexionBD.close();
+                    if (!completarDireccionDesdeCP(sucursal, respuesta)) {
                         return respuesta;
                     }
                 }
 
-                int filasAfectadas = conexionBD.update("sucursal.editar", sucursal);
+                int filas = conexionBD.update("sucursal.editar", sucursal);
                 conexionBD.commit();
 
-                if (filasAfectadas > 0) {
+                if (filas > 0) {
                     respuesta.setError(false);
                     respuesta.setMensaje(Constantes.MSJ_EXITO_ACTUALIZAR + Constantes.SUCURSAL);
                 } else {
@@ -94,8 +100,8 @@ public class SucursalImp {
                 }
 
             } catch (Exception e) {
-                respuesta.setMensaje("Error al actualizar la " + Constantes.SUCURSAL + ": " + e.getMessage());
-            }
+                respuesta.setMensaje("Error al actualizar sucursal: " + e.getMessage());
+            } 
             conexionBD.close();
         } else {
             respuesta.setMensaje(Constantes.MSJ_ERROR_BD);
@@ -109,26 +115,25 @@ public class SucursalImp {
         respuesta.setError(true);
 
         SqlSession conexionBD = MyBatisUtil.getSession();
+
         if (conexionBD != null) {
             try {
                 if (esSucursalInactiva(conexionBD, idSucursal)) {
-                    respuesta.setMensaje(Constantes.MSJ_ERROR_BAJA + Constantes.SUCURSAL + 
+                    respuesta.setMensaje(Constantes.MSJ_ERROR_BAJA + Constantes.SUCURSAL +
                             " porque ya está inactiva.");
-                    conexionBD.close();
                     return respuesta;
                 }
 
                 if (tieneDependencias(conexionBD, idSucursal)) {
                     respuesta.setMensaje(Constantes.MSJ_ERROR_DEPENDENCIAS + Constantes.SUCURSAL +
                             Constantes.MSJ_ERROR_DEPENDENCIAS_MOTIVO);
-                    conexionBD.close();
                     return respuesta;
                 }
 
-                int filasAfectadas = conexionBD.update("sucursal.dar-baja", idSucursal);
+                int filas = conexionBD.update("sucursal.dar-baja", idSucursal);
                 conexionBD.commit();
 
-                if (filasAfectadas > 0) {
+                if (filas > 0) {
                     respuesta.setError(false);
                     respuesta.setMensaje(Constantes.MSJ_EXITO_BAJA + Constantes.SUCURSAL);
                 } else {
@@ -136,8 +141,8 @@ public class SucursalImp {
                 }
 
             } catch (Exception e) {
-                respuesta.setMensaje("Error al dar de baja la " + Constantes.SUCURSAL + ": " + e.getMessage());
-            }
+                respuesta.setMensaje("Error al dar de baja la sucursal: " + e.getMessage());
+            } 
             conexionBD.close();
         } else {
             respuesta.setMensaje(Constantes.MSJ_ERROR_BD);
@@ -146,47 +151,70 @@ public class SucursalImp {
         return respuesta;
     }
 
-    // Funciones auxiliares
-    private static boolean completarDireccionDesdeCP(SqlSession conexionBD, Sucursal sucursal, Respuesta respuesta) {
-        Map<String, Object> direccion = conexionBD.selectOne(
-                "sucursal.obtener-datos-direccion-por-codigopostal",
-                sucursal.getCodigoPostal());
+    private static boolean completarDireccionDesdeCP(Sucursal sucursal, Respuesta respuesta) {
 
-        if (direccion == null) {
-            respuesta.setMensaje("No se encontró ninguna colonia con ese código postal.");
+        // Obtener la dirección base del CP (país, estado, municipio)
+        DatosCPDTO datos = DireccionImp.obtenerDatosPorCP(sucursal.getCodigoPostal());
+
+        if (datos == null || datos.isError()) {
+            respuesta.setMensaje(datos != null ? datos.getMensaje() :
+                    "No se encontró información del código postal ingresado.");
             return false;
         }
 
-        sucursal.setIdColonia((Integer) direccion.get("id_colonia"));
-        sucursal.setIdMunicipio((Integer) direccion.get("id_municipio"));
-        sucursal.setIdEstado((Integer) direccion.get("id_estado"));
-        sucursal.setIdPais((Integer) direccion.get("id_pais"));
+        // Obtener todas las colonias del CP
+        List<ColoniaDTO> colonias = DireccionImp.obtenerColoniasPorCP(sucursal.getCodigoPostal());
+
+        if (colonias == null || colonias.isEmpty()) {
+            respuesta.setMensaje("El código postal no tiene colonias registradas.");
+            return false;
+        }
+
+        // Validar si la colonia seleccionada pertenece al CP
+        boolean coloniaValida = colonias.stream()
+                .anyMatch(c -> c.getIdColonia().equals(sucursal.getIdColonia()));
+
+        if (!coloniaValida) {
+            respuesta.setMensaje("La colonia seleccionada NO pertenece al código postal ingresado.");
+            return false;
+        }
+
+        // Asignar datos al POJO sucursal
+        sucursal.setIdPais(datos.getIdPais());
+        sucursal.setIdEstado(datos.getIdEstado());
+        sucursal.setIdMunicipio(datos.getIdMunicipio());
+
         return true;
     }
 
     private static String generarCodigoSucursal(SqlSession conexionBD, Sucursal sucursal) {
-        Map<String, Object> datosMunicipio = conexionBD.selectOne(
-                "sucursal.obtener-datos-municipio", sucursal.getIdMunicipio());
 
-        if (datosMunicipio == null) {
+        DatosCPDTO municipio = DireccionImp.obtenerMunicipioPorId(sucursal.getIdMunicipio());
+
+        if (municipio == null || municipio.isError()) {
             throw new RuntimeException("No se encontró información del municipio.");
         }
 
-        String nombreMunicipio = (String) datosMunicipio.get("nombreMunicipio");
-        Integer codigoMunicipio = (Integer) datosMunicipio.get("codigoMunicipio");
+        String nombreMunicipio = municipio.getMunicipio();
+        int codigoMunicipio = municipio.getIdMunicipio();
 
-        Integer total = conexionBD.selectOne(
-                "sucursal.contar-sucursales-por-municipio", sucursal.getIdMunicipio());
-        if (total == null) total = 0;
+        // Obtener el consecutivo REAL
+        Integer maxConsecutivo = conexionBD.selectOne(
+                "sucursal.obtener-maximo-consecutivo",
+                sucursal.getIdMunicipio()
+        );
 
-        String nombreCortoMunicipio = nombreMunicipio.replaceAll("\\s+", "").toUpperCase();
-        nombreCortoMunicipio = nombreCortoMunicipio.length() >= 3 ?
-                nombreCortoMunicipio.substring(0, 3) : nombreCortoMunicipio;
+        if (maxConsecutivo == null) maxConsecutivo = 0;
 
-        int contador = total + 1;
-        String cont = String.format(Constantes.FORMATO_DOS_DIGITOS, contador);
+        int contador = maxConsecutivo + 1;
+        String cont = String.format("%02d", contador);
 
-        return Constantes.PREFIJO_SUCURSAL + nombreCortoMunicipio + codigoMunicipio + "-" + cont;
+        String nombreCorto = nombreMunicipio.replaceAll("\\s+", "").toUpperCase();
+        if (nombreCorto.length() >= 3) {
+            nombreCorto = nombreCorto.substring(0, 3);
+        }
+
+        return Constantes.PREFIJO_SUCURSAL + nombreCorto + codigoMunicipio + "-" + cont;
     }
 
     private static boolean tieneDependencias(SqlSession conexionBD, int idSucursal) {

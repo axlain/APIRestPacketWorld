@@ -40,7 +40,11 @@
         INSERT INTO cliente (nombre, apellido_paterno, apellido_materno, calle, numero, telefono, correo, id_pais, id_estado, id_municipio, id_colonia)
         VALUES (#{nombre}, #{apellidoPaterno}, #{apellidoMaterno}, #{calle}, #{numero}, #{telefono}, #{correo}, #{idPais}, #{idEstado}, #{idMunicipio}, #{idColonia});
     </insert>
-
     
+    <select id="verificar-existe" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM cliente
+        WHERE id_cliente = #{idCliente};
+    </select>
 
 </mapper>

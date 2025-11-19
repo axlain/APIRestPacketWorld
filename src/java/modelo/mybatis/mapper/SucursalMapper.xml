@@ -35,33 +35,14 @@
         ORDER BY s.id_sucursal; 
     </select>
     
-    <select id="obtener-datos-direccion-por-codigopostal" parameterType="string" resultType="map">
+    <select id="obtener-maximo-consecutivo" parameterType="int" resultType="int">
         SELECT 
-            c.id_colonia,
-            m.id_municipio,
-            e.id_estado,
-            p.id_pais 
-        FROM colonia AS c 
-        INNER JOIN municipio AS m ON c.codigo_municipio = m.codigo 
-        INNER JOIN estado AS e ON m.id_estado = e.id_estado 
-        INNER JOIN pais AS p ON e.id_pais = p.id_pais 
-        WHERE c.codigo_postal = #{codigo_postal} 
-        LIMIT 1;
-    </select>
-    
-    <select id="contar-sucursales-por-municipio" parameterType="int" resultType="int">
-        SELECT COUNT(*) 
-        FROM sucursal 
+            IFNULL(
+                MAX(CAST(SUBSTRING_INDEX(codigo, '-', -1) AS UNSIGNED)), 
+                0
+            ) AS maxConsecutivo
+        FROM sucursal
         WHERE id_municipio = #{idMunicipio};
-    </select>
-
-    <select id="obtener-datos-municipio" parameterType="int" resultType="map">
-        SELECT 
-            m.codigo AS codigoMunicipio,
-            m.nombre AS nombreMunicipio
-        FROM municipio AS m
-        WHERE m.id_municipio = #{idMunicipio}
-        LIMIT 1;
     </select>
 
 
@@ -78,8 +59,7 @@
     <select id="obtener-estatus-sucursal" parameterType="int" resultType="int">
         SELECT id_estatus_sucursal
         FROM sucursal
-        WHERE id_sucursal = #{idSucursal}
-        LIMIT 1;
+        WHERE id_sucursal = #{idSucursal};
     </select>
 
     <update id="editar" parameterType="pojo.Sucursal">
@@ -106,9 +86,7 @@
         SET id_estatus_sucursal = 2 
         WHERE id_sucursal = #{idSucursal};
     </update>
-
-
-
+    
 </mapper>
 
 

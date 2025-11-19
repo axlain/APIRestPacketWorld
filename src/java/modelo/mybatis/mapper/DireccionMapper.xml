@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="direccion">
+
+    <select id="obtener-datos-por-cp" parameterType="string" resultType="dto.DatosCPDTO">
+        SELECT DISTINCT
+            p.id_pais AS idPais,
+            p.nombre AS pais,
+            e.id_estado AS idEstado,
+            e.nombre AS estado,
+            m.id_municipio AS idMunicipio,
+            m.nombre AS municipio,
+            c.codigo_postal AS codigoPostal
+        FROM colonia c
+        INNER JOIN municipio m ON c.codigo_municipio = m.codigo
+        INNER JOIN estado e ON m.id_estado = e.id_estado
+        INNER JOIN pais p ON e.id_pais = p.id_pais
+        WHERE c.codigo_postal = #{codigoPostal};
+    </select>
+
+    <select id="obtener-colonias-por-cp" parameterType="string" resultType="dto.ColoniaDTO">
+        SELECT
+            id_colonia AS idColonia,
+            nombre AS colonia,
+            codigo_postal AS codigoPostal
+        FROM colonia
+        WHERE codigo_postal = #{codigoPostal};
+    </select>
+
+    <select id="obtener-municipio" parameterType="int" resultType="dto.DatosCPDTO">
+        SELECT 
+            id_municipio AS idMunicipio,
+            nombre AS municipio
+        FROM municipio
+        WHERE id_municipio = #{idMunicipio};
+    </select>
+
+</mapper>
+

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="envio">
+
+    <select id="consultar" parameterType="string" resultType="pojo.Envio">
+        SELECT
+            e.id_envio AS idEnvio,
+            e.numero_guia AS numeroGuia,
+            e.id_destinatario AS idDestinatario,
+            e.id_cliente AS idCliente,
+            e.id_sucursal AS idSucursal,
+            e.id_conductor AS idConductor,
+            e.id_estatus_actual AS idEstatusActual,
+            e.costo_total AS costoTotal
+        FROM envio AS e
+        WHERE e.numero_guia = #{numeroGuia};
+    </select>
+
+
+    <insert id="registrar" parameterType="pojo.Envio">
+        INSERT INTO envio (
+            numero_guia,
+            id_destinatario,
+            id_cliente,
+            id_sucursal,
+            id_conductor,
+            id_estatus_actual,
+            costo_total
+        ) VALUES (
+            #{numeroGuia},
+            #{idDestinatario},
+            #{idCliente},
+            #{idSucursal},
+            #{idConductor},
+            #{idEstatusActual},
+            #{costoTotal}
+        );
+    </insert>
+
+    <update id="editar" parameterType="pojo.Envio">
+        UPDATE envio
+        SET
+            id_destinatario = #{idDestinatario},
+            id_cliente = #{idCliente},
+            id_sucursal = #{idSucursal},
+            id_conductor = #{idConductor},
+            id_estatus_actual = #{idEstatusActual},
+            costo_total = #{costoTotal}
+        WHERE numero_guia = #{numeroGuia};
+    </update>
+
+    <update id="actualizar-estatus" parameterType="map">
+        UPDATE envio
+        SET id_estatus_actual = #{estatus}
+        WHERE numero_guia = #{guia};
+    </update>
+
+</mapper>

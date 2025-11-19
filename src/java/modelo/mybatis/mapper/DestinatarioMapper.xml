@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="destinatario">
+
+    <select id="obtener-todos" resultType="pojo.Destinatario">
+        SELECT
+            d.id_destinatario AS idDestinatario,
+            d.nombre AS nombre,
+            d.apellido_paterno AS apellidoPaterno,
+            d.apellido_materno AS apellidoMaterno,
+            d.calle AS calle,
+            d.numero AS numero,
+            d.id_pais AS idPais,
+            d.id_estado AS idEstado,
+            d.id_municipio AS idMunicipio,
+            d.id_colonia AS idColonia
+        FROM destinatario AS d
+        ORDER BY d.id_destinatario;
+    </select>
+
+    <select id="verificar-existe" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM destinatario
+        WHERE id_destinatario = #{idDestinatario};
+    </select>
+
+    <select id="obtener-por-id" parameterType="int" resultType="pojo.Destinatario">
+        SELECT
+            d.id_destinatario AS idDestinatario,
+            d.nombre AS nombre,
+            d.apellido_paterno AS apellidoPaterno,
+            d.apellido_materno AS apellidoMaterno,
+            d.calle AS calle,
+            d.numero AS numero,
+            d.id_pais AS idPais,
+            d.id_estado AS idEstado,
+            d.id_municipio AS idMunicipio,
+            d.id_colonia AS idColonia
+        FROM destinatario AS d
+        WHERE d.id_destinatario = #{idDestinatario}
+        LIMIT 1;
+    </select>
+
+    <insert id="registrar" parameterType="pojo.Destinatario">
+        INSERT INTO destinatario (
+            nombre,
+            apellido_paterno,
+            apellido_materno,
+            calle,
+            numero,
+            id_pais,
+            id_estado,
+            id_municipio,
+            id_colonia
+        ) VALUES (
+            #{nombre},
+            #{apellidoPaterno},
+            #{apellidoMaterno},
+            #{calle},
+            #{numero},
+            #{idPais},
+            #{idEstado},
+            #{idMunicipio},
+            #{idColonia}
+        );
+    </insert>
+
+    <update id="editar" parameterType="pojo.Destinatario">
+        UPDATE destinatario
+        SET
+            nombre = #{nombre},
+            apellido_paterno = #{apellidoPaterno},
+            apellido_materno = #{apellidoMaterno},
+            calle = #{calle},
+            numero = #{numero},
+            id_pais = #{idPais},
+            id_estado = #{idEstado},
+            id_municipio = #{idMunicipio},
+            id_colonia = #{idColonia}
+        WHERE id_destinatario = #{idDestinatario};
+    </update>
+
+    <delete id="eliminar" parameterType="int">
+        DELETE FROM destinatario
+        WHERE id_destinatario = #{idDestinatario};
+    </delete>
+
+</mapper>

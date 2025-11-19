@@ -12,6 +12,7 @@ import utilidades.Constantes;
 
 
 public class ColaboradorImp {
+    
     public static List<Colaborador> obtenerColaborador() {
         SqlSession conexionBD = MyBatisUtil.getSession();
         List<Colaborador> colaboradores = null;

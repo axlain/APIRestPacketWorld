@@ -8,168 +8,166 @@ public class Sucursal {
     private String numero;
 
     private int idPais;
-    private String Pais;
+    private String pais;
     private int idEstado;
-    private String Estado;
+    private String estado;
     private int idMunicipio;
-    private String Municipio;
+    private String municipio;
     private int idColonia;
-    private String Colonia;
+    private String colonia;
+
     private String codigoPostal;
+
     private int idEstatusSucursal;
-    private String EstatusSucursal;
+    private String estatusSucursal;
 
     public Sucursal() {
     }
 
-    public Sucursal(int idSucursal, String codigo, String nombreCorto, String calle, String numero, int idPais, String Pais, int idEstado, String Estado, int idMunicipio, String Municipio, int idColonia, String Colonia, String codigoPostal, int idEstatusSucursal, String EstatusSucursal) {
+    public Sucursal(int idSucursal, String codigo, String nombreCorto, String calle, String numero, int idPais, String pais, int idEstado, String estado, int idMunicipio, String municipio, int idColonia, String colonia, String codigoPostal, int idEstatusSucursal, String estatusSucursal) {
         this.idSucursal = idSucursal;
         this.codigo = codigo;
         this.nombreCorto = nombreCorto;
         this.calle = calle;
         this.numero = numero;
         this.idPais = idPais;
-        this.Pais = Pais;
+        this.pais = pais;
         this.idEstado = idEstado;
-        this.Estado = Estado;
+        this.estado = estado;
         this.idMunicipio = idMunicipio;
-        this.Municipio = Municipio;
+        this.municipio = municipio;
         this.idColonia = idColonia;
-        this.Colonia = Colonia;
+        this.colonia = colonia;
         this.codigoPostal = codigoPostal;
         this.idEstatusSucursal = idEstatusSucursal;
-        this.EstatusSucursal = EstatusSucursal;
+        this.estatusSucursal = estatusSucursal;
     }
-
 
     public int getIdSucursal() {
         return idSucursal;
-    }
-
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public String getNombreCorto() {
-        return nombreCorto;
-    }
-
-    public String getCalle() {
-        return calle;
-    }
-
-    public String getNumero() {
-        return numero;
-    }
-
-    public int getIdPais() {
-        return idPais;
-    }
-
-    public String getPais() {
-        return Pais;
-    }
-
-    public int getIdEstado() {
-        return idEstado;
-    }
-
-    public String getEstado() {
-        return Estado;
-    }
-
-    public int getIdMunicipio() {
-        return idMunicipio;
-    }
-
-    public String getMunicipio() {
-        return Municipio;
-    }
-
-    public int getIdColonia() {
-        return idColonia;
-    }
-
-    public String getColonia() {
-        return Colonia;
-    }
-
-    public String getCodigoPostal() {
-        return codigoPostal;
-    }
-
-    public int getIdEstatusSucursal() {
-        return idEstatusSucursal;
-    }
-
-    public String getEstatusSucursal() {
-        return EstatusSucursal;
     }
 
     public void setIdSucursal(int idSucursal) {
         this.idSucursal = idSucursal;
     }
 
+    public String getCodigo() {
+        return codigo;
+    }
+
     public void setCodigo(String codigo) {
         this.codigo = codigo;
+    }
+
+    public String getNombreCorto() {
+        return nombreCorto;
     }
 
     public void setNombreCorto(String nombreCorto) {
         this.nombreCorto = nombreCorto;
     }
 
+    public String getCalle() {
+        return calle;
+    }
+
     public void setCalle(String calle) {
         this.calle = calle;
+    }
+
+    public String getNumero() {
+        return numero;
     }
 
     public void setNumero(String numero) {
         this.numero = numero;
     }
 
+    public int getIdPais() {
+        return idPais;
+    }
+
     public void setIdPais(int idPais) {
         this.idPais = idPais;
     }
 
-    public void setPais(String Pais) {
-        this.Pais = Pais;
+    public String getPais() {
+        return pais;
+    }
+
+    public void setPais(String pais) {
+        this.pais = pais;
+    }
+
+    public int getIdEstado() {
+        return idEstado;
     }
 
     public void setIdEstado(int idEstado) {
         this.idEstado = idEstado;
     }
 
-    public void setEstado(String Estado) {
-        this.Estado = Estado;
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public int getIdMunicipio() {
+        return idMunicipio;
     }
 
     public void setIdMunicipio(int idMunicipio) {
         this.idMunicipio = idMunicipio;
     }
 
-    public void setMunicipio(String Municipio) {
-        this.Municipio = Municipio;
+    public String getMunicipio() {
+        return municipio;
+    }
+
+    public void setMunicipio(String municipio) {
+        this.municipio = municipio;
+    }
+
+    public int getIdColonia() {
+        return idColonia;
     }
 
     public void setIdColonia(int idColonia) {
         this.idColonia = idColonia;
     }
 
-    public void setColonia(String Colonia) {
-        this.Colonia = Colonia;
+    public String getColonia() {
+        return colonia;
+    }
+
+    public void setColonia(String colonia) {
+        this.colonia = colonia;
+    }
+
+    public String getCodigoPostal() {
+        return codigoPostal;
     }
 
     public void setCodigoPostal(String codigoPostal) {
         this.codigoPostal = codigoPostal;
     }
 
+    public int getIdEstatusSucursal() {
+        return idEstatusSucursal;
+    }
+
     public void setIdEstatusSucursal(int idEstatusSucursal) {
         this.idEstatusSucursal = idEstatusSucursal;
     }
 
-    public void setEstatusSucursal(String EstatusSucursal) {
-        this.EstatusSucursal = EstatusSucursal;
+    public String getEstatusSucursal() {
+        return estatusSucursal;
     }
-    
-    
-    
+
+    public void setEstatusSucursal(String estatusSucursal) {
+        this.estatusSucursal = estatusSucursal;
+    }
 }
