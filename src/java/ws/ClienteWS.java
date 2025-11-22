@@ -18,11 +18,12 @@ import pojo.Cliente;
 
 @Path ("cliente")
 public class ClienteWS {
+    
     @Path ("obtener-todos")
     @GET 
     @Produces (MediaType.APPLICATION_JSON)
-    public List<Cliente> obtenerCliente(){
-         return ClienteImp.obtenerCliente();
+    public List<Cliente> obtenerClientes(){
+         return ClienteImp.obtenerClientes();
     }
     
     @Path("registrar")

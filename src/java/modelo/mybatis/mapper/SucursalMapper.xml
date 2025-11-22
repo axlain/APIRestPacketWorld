@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace = "sucursal" >
+    
     <select id="obtener-todos"  resultType = "pojo.Sucursal">
         SELECT 
             s.id_sucursal AS idSucursal,
@@ -45,14 +46,27 @@
         WHERE id_municipio = #{idMunicipio};
     </select>
 
-
     <insert id="registrar" parameterType="pojo.Sucursal">
         INSERT INTO sucursal (
-            codigo, nombre_corto, calle, numero,
-            id_pais, id_estado, id_municipio, id_colonia, id_estatus_sucursal
+            codigo,
+            nombre_corto,
+            calle,
+            numero,
+            id_pais,
+            id_estado,
+            id_municipio,
+            id_colonia,
+            id_estatus_sucursal
         ) VALUES (
-            #{codigo}, #{nombreCorto}, #{calle}, #{numero},
-            #{idPais}, #{idEstado}, #{idMunicipio}, #{idColonia}, 1
+            #{codigo},
+            #{nombreCorto},
+            #{calle},
+            #{numero},
+            #{idPais},
+            #{idEstado},
+            #{idMunicipio},
+            #{idColonia},
+            1
         );
     </insert>
     

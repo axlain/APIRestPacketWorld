@@ -89,10 +89,9 @@ public class EnvioImp {
 
         } catch (Exception e) {
             respuesta.setMensaje("Error al registrar el envío: " + e.getMessage());
-        } finally {
-            conexionBD.close();
-        }
-
+        } 
+        conexionBD.close();
+        
         return respuesta;
     }
 
@@ -107,21 +106,21 @@ public class EnvioImp {
         }
 
         try {
-            // 1️⃣ Verificar que existe el envío
+            // Verificar que existe el envío
             Envio envioBD = conexionBD.selectOne("envio.consultar", envio.getNumeroGuia());
             if (envioBD == null) {
                 respuesta.setMensaje("El número de guía no existe.");
                 return respuesta;
             }
 
-            // 2️⃣ Validar destinatario
+            // Validar destinatario
             Integer existeDestinatario = conexionBD.selectOne("destinatario.verificar-existe", envio.getIdDestinatario());
             if (existeDestinatario == null || existeDestinatario == 0) {
                 respuesta.setMensaje("El destinatario especificado no existe.");
                 return respuesta;
             }
 
-            // 3️⃣ Validar sucursal activa
+            // Validar sucursal activa
             Integer estatusSucursal = conexionBD.selectOne("sucursal.obtener-estatus-sucursal", envio.getIdSucursal());
             if (estatusSucursal == null) {
                 respuesta.setMensaje("La sucursal indicada no existe.");
@@ -132,7 +131,7 @@ public class EnvioImp {
                 return respuesta;
             }
 
-            // 4️⃣ Conductor (si lo proporcionan)
+            // Conductor (si lo proporcionan)
             if (envio.getIdConductor() != null) {
                 Integer existeConductor = conexionBD.selectOne("colaborador.verificar-existe", envio.getIdConductor());
                 if (existeConductor == null || existeConductor == 0) {
@@ -147,7 +146,6 @@ public class EnvioImp {
                 }
             }
 
-            // 5️⃣ Ejecutar actualización
             int filasAfectadas = conexionBD.update("envio.editar", envio);
             conexionBD.commit();
 
@@ -160,9 +158,8 @@ public class EnvioImp {
 
         } catch (Exception e) {
             respuesta.setMensaje("Error al editar el envío: " + e.getMessage());
-        } finally {
-            conexionBD.close();
-        }
+        } 
+        conexionBD.close();
 
         return respuesta;
     }
@@ -178,21 +175,21 @@ public class EnvioImp {
         }
 
         try {
-            // 1️⃣ Verificar que el envío existe
+            // Verificar que el envío existe
             Envio envio = conexionBD.selectOne("envio.consultar", guia);
             if (envio == null) {
                 respuesta.setMensaje("El envío no existe.");
                 return respuesta;
             }
 
-            // 2️⃣ Verificar que el estatus existe
+            // Verificar que el estatus existe
             Integer existe = conexionBD.selectOne("estatus-envio.verificar-existe", nuevoEstatus);
             if (existe == null || existe == 0) {
                 respuesta.setMensaje("El estatus especificado no existe.");
                 return respuesta;
             }
 
-            // 3️⃣ Ejecutar actualización
+            // Ejecutar actualización
             Map<String, Object> params = new HashMap<>();
             params.put("guia", guia);
             params.put("estatus", nuevoEstatus);
@@ -209,10 +206,9 @@ public class EnvioImp {
 
         } catch (Exception e) {
             respuesta.setMensaje("Error al actualizar estatus: " + e.getMessage());
-        } finally {
-            conexionBD.close();
-        }
-
+        } 
+        conexionBD.close();
+        
         return respuesta;
     }
 }

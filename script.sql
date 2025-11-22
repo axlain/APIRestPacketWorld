@@ -156,3 +156,81 @@ INSERT INTO tipo_unidad (nombre) VALUES
 ('Diesel'),
 ('Eléctrica'),
 ('Híbrida');
+
+SELECT * FROM pais;
+
+SELECT * FROM estado;
+
+SELECT * FROM municipio WHERE id_estado = 30;
+DESCRIBE colonia;
+
+SELECT * FROM colonia;
+SELECT *
+FROM colonia
+WHERE codigo_municipio = 30087;
+
+SELECT * FROM sucursal;
+
+DELETE  FROM sucursal WHERE id_sucursal = 10;
+
+SELECT * FROM estatus_sucursal;
+
+SELECT * FROM cliente;
+
+SELECT * FROM destinatario;
+DESCRIBE destinatario;
+DELETE  FROM destinatario WHERE id_destinatario = 2;
+
+SELECT * FROM colaborador;
+
+SELECT * FROM rol;
+
+SELECT * FROM unidad;
+
+SELECT * FROM estatus_unidad;
+
+SELECT * FROM envio;
+
+SELECT * FROM estatus_envio;
+
+SELECT * FROM rastreo_envio;
+
+SELECT 
+    c.id_colonia,
+    c.nombre AS colonia,
+    c.codigo_postal AS codigoPostal,
+    m.id_municipio,
+    m.nombre AS municipio,
+    e.id_estado,
+    e.nombre AS estado,
+    p.id_pais,
+    p.nombre AS pais
+FROM colonia c
+INNER JOIN municipio m ON c.codigo_municipio = m.codigo
+INNER JOIN estado e ON m.id_estado = e.id_estado
+INNER JOIN pais p ON e.id_pais = p.id_pais
+WHERE c.codigo_postal = '91193';
+
+SELECT * FROM colonia WHERE codigo_postal = '91176';
+
+SELECT *
+FROM municipio
+WHERE codigo = 30087;
+
+SELECT 
+    p.id_pais AS idPais,
+    p.nombre AS pais,
+    e.id_estado AS idEstado,
+    e.nombre AS estado,
+    m.id_municipio AS idMunicipio,
+    m.nombre AS municipio,
+    c.id_colonia AS idColonia,
+    c.nombre AS colonia,
+    c.codigo_postal AS codigoPostal
+FROM colonia c
+INNER JOIN municipio m ON c.codigo_municipio = m.codigo
+INNER JOIN estado e ON m.id_estado = e.id_estado
+INNER JOIN pais p ON e.id_pais = p.id_pais
+WHERE c.codigo_postal = '91193';
+
+
