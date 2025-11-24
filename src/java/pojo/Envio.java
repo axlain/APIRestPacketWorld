@@ -9,10 +9,11 @@ public class Envio {
     private Integer idConductor;
     private int idEstatusActual;
     private double costoTotal;
+    private Integer idCreadoPor;
 
     public Envio() {}
 
-    public Envio(int idEnvio, String numeroGuia, int idDestinatario, int idCliente, int idSucursal, Integer idConductor, int idEstatusActual, double costoTotal) {
+    public Envio(int idEnvio, String numeroGuia, int idDestinatario, int idCliente, int idSucursal, Integer idConductor, int idEstatusActual, double costoTotal, Integer idCreadoPor) {
         this.idEnvio = idEnvio;
         this.numeroGuia = numeroGuia;
         this.idDestinatario = idDestinatario;
@@ -21,7 +22,9 @@ public class Envio {
         this.idConductor = idConductor;
         this.idEstatusActual = idEstatusActual;
         this.costoTotal = costoTotal;
+        this.idCreadoPor = idCreadoPor;
     }
+
 
     public int getIdEnvio() {
         return idEnvio;
@@ -85,6 +88,14 @@ public class Envio {
 
     public void setCostoTotal(double costoTotal) {
         this.costoTotal = costoTotal;
+    }
+
+    public Integer getIdCreadoPor() {
+        return idCreadoPor;
+    }
+
+    public void setIdCreadoPor(Integer idCreadoPor) {
+        this.idCreadoPor = idCreadoPor;
     }
     
     

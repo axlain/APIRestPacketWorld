@@ -26,7 +26,8 @@
             id_sucursal,
             id_conductor,
             id_estatus_actual,
-            costo_total
+            costo_total,
+            id_creador
         ) VALUES (
             #{numeroGuia},
             #{idDestinatario},
@@ -34,8 +35,9 @@
             #{idSucursal},
             #{idConductor},
             #{idEstatusActual},
-            #{costoTotal}
-        );
+            #{costoTotal},
+            #{idCreadoPor}
+        )
     </insert>
 
     <update id="editar" parameterType="pojo.Envio">
