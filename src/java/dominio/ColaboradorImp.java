@@ -36,6 +36,19 @@ public class ColaboradorImp {
 
         if (conexionBD != null) {
             try {
+                //validar digitos de la curp
+                if (colaborador.getCurp() == null || colaborador.getCurp().length() != 18) {
+                    respuesta.setMensaje("La CURP debe tener exactamente 18 caracteres.");
+                    return respuesta;
+                }
+
+                // validar formato de la curp
+                String regexCurp = "^[A-Z]{4}\\d{6}[A-Z]{6}[A-Z0-9]{2}$";
+                if (!colaborador.getCurp().toUpperCase().matches(regexCurp)) {
+                    respuesta.setMensaje("La CURP ingresada no tiene un formato válido.");
+                    return respuesta;
+                }
+                
                 Integer existeCurp = conexionBD.selectOne("colaborador.verificar-curp", colaborador.getCurp());
                 if (existeCurp != null && existeCurp > 0) {
                     respuesta.setMensaje("Ya existe un colaborador con la CURP ingresada.");
@@ -100,14 +113,27 @@ public class ColaboradorImp {
 
         if (conexionBD != null) {
             try {
-                // 1️⃣ Verificar si el colaborador existe
+                // Verificar si el colaborador existe
                 Integer existe = conexionBD.selectOne("colaborador.verificar-existe", colaborador.getIdColaborador());
                 if (existe == null || existe == 0) {
                     respuesta.setMensaje("El colaborador no existe en la base de datos.");
                     return respuesta;
                 }
-
-                // 2️⃣ Validar sucursal existente y activa
+                
+                //validar tamaño de la curp
+                if (colaborador.getCurp() == null || colaborador.getCurp().length() != 18) {
+                    respuesta.setMensaje("La CURP debe tener exactamente 18 caracteres.");
+                    return respuesta;
+                }
+                
+                //valdiar el fromato de la curp
+                 String regexCurp = "^[A-Z]{4}\\d{6}[A-Z]{6}[A-Z0-9]{2}$";
+                if (!colaborador.getCurp().toUpperCase().matches(regexCurp)) {
+                    respuesta.setMensaje("La CURP ingresada no tiene un formato válido.");
+                    return respuesta;
+                }
+                
+                //  Validar sucursal existente y activa
                 Integer estatusSucursal = conexionBD.selectOne("sucursal.obtener-estatus-sucursal", colaborador.getIdSucursal());
                 if (estatusSucursal == null) {
                     respuesta.setMensaje("La sucursal indicada no existe.");
@@ -118,7 +144,7 @@ public class ColaboradorImp {
                     return respuesta;
                 }
 
-                // 3️⃣ Validar CURP única (que no pertenezca a otro colaborador)
+                // Validar CURP única (que no pertenezca a otro colaborador)
                 Integer curpExistente = conexionBD.selectOne("colaborador.verificar-curp", colaborador.getCurp());
                 if (curpExistente != null && curpExistente > 0) {
                     // Verificar si la CURP pertenece a otro colaborador distinto
@@ -131,7 +157,7 @@ public class ColaboradorImp {
                     }
                 }
 
-                // 4️⃣ Validar número de licencia (solo si es conductor)
+                // Validar número de licencia (solo si es conductor)
                 // y si proporcionó número de licencia
                 if (colaborador.getIdRol() == 3 && colaborador.getNumeroLicencia() != null && !colaborador.getNumeroLicencia().trim().isEmpty()) {
                     Integer licenciaExistente = conexionBD.selectOne("colaborador.verificar-licencia", colaborador.getNumeroLicencia());
@@ -147,7 +173,7 @@ public class ColaboradorImp {
                     }
                 }
 
-                // 5️⃣ Ejecutar actualización
+                // Ejecutar actualización
                 int filasAfectadas = conexionBD.update("colaborador.editar", colaborador);
                 conexionBD.commit();
 
@@ -177,14 +203,28 @@ public class ColaboradorImp {
         if (conexionBD != null) {
             try {
 
-                // 1️⃣ Verificar si el colaborador existe
+                // Verificar si el colaborador existe
                 Integer existe = conexionBD.selectOne("colaborador.verificar-existe", idColaborador);
                 if (existe == null || existe == 0) {
                     respuesta.setMensaje("El colaborador no existe en la base de datos.");
                     return respuesta;
                 }
+                
+                // Verificar si el colaborador está asignado a alguna unidad
+                Integer tieneUnidad = conexionBD.selectOne("colaborador.tiene-unidad", idColaborador);
+                if (tieneUnidad != null && tieneUnidad > 0) {
+                    respuesta.setMensaje("No se puede eliminar al colaborador porque tiene una unidad asignada.");
+                    return respuesta;
+                }
 
-                // 2️⃣ Intentar eliminar
+                // Verificar si está relacionado con envíos
+                Integer envios = conexionBD.selectOne("colaborador.tiene-envios", idColaborador);
+                if (envios != null && envios > 0) {
+                    respuesta.setMensaje("No se puede eliminar el colaborador porque tiene envíos asociados.");
+                    return respuesta;
+                }
+
+                // Intentar eliminar
                 int filasAfectadas = conexionBD.delete("colaborador.eliminar", idColaborador);
                 conexionBD.commit();
 

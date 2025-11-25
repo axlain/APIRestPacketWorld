@@ -111,11 +111,22 @@
         WHERE id_colaborador = #{idColaborador};
     </update>
     
-    <select id="conductor-tiene-unidad" parameterType="int" resultType="int">
+   
+    <select id="tiene-unidad" parameterType="int" resultType="int">
         SELECT COUNT(*)
-        FROM unidad
-        WHERE id_conductor = #{idConductor} 
-          AND estatus = 1;  
+        FROM colaborador
+        WHERE id_colaborador = #{idColaborador}
+          AND id_unidad IS NOT NULL;
     </select>
+
+    
+    <select id="tiene-envios" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM envio
+        WHERE id_conductor = #{idColaborador}
+           OR id_creador = #{idColaborador}
+           OR id_entrega = #{idColaborador};
+    </select>
+
 
 </mapper>
