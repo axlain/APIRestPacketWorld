@@ -2,28 +2,49 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace = "autentificar" >
-    <select id="administrador" parameterType = "map" resultType = "pojo.Colaborador">
-        SELECT c.id_colaborador,c.nombre,c.apellido_paterno,c.apellido_materno, c.numero_personal,c.correo,c.id_rol,
-        r.nombre AS rol,
-        s.id_sucursal,s.codigo AS codigo_sucursal, s.nombre_corto AS nombre_sucursal,s.calle AS calle_sucursal,s.numero AS numero_sucursal,
-        p.nombre AS pais_sucursal,e.nombre AS estado_sucursal,m.nombre AS municipio_sucursal,co.nombre AS colonia_sucursal,co.ciudad AS ciudad_sucursal,co.codigo_postal AS codigo_postal_sucursal 
-        FROM colaborador AS c 
-        INNER JOIN rol AS r  
-        ON r.id_rol = c.id_rol
-        INNER JOIN sucursal AS s  
-        ON s.id_sucursal = c.id_sucursal
-        LEFT JOIN pais AS p  
-        ON s.id_pais = p.id_pais
-        LEFT JOIN estado AS e 
-        ON s.id_estado = e.id_estado 
-        LEFT JOIN municipio AS m 
-        ON s.id_municipio = m.id_municipio
-        LEFT JOIN colonia AS co 
-        ON s.id_colonia = co.id_colonia
-        WHERE c.numero_personal = #{numero_personal}  
-        AND c.contrasena = #{contrasena};
+    <select id="administrador" parameterType="map" resultType="pojo.Colaborador">
+    SELECT 
+        c.id_colaborador AS idColaborador,
+        c.nombre AS nombre,
+        c.apellido_paterno AS apellidoPaterno,
+        c.apellido_materno AS apellidoMaterno,
+        c.numero_personal AS numeroPersonal,
+        c.correo AS correo,
+        c.id_rol AS idRol,
 
-    </select>
+        r.nombre AS rol,
+
+        s.id_sucursal AS idSucursal,
+        s.codigo AS codigoSucursal,
+        s.nombre_corto AS nombreSucursal,
+        s.calle AS calleSucursal,
+        s.numero AS numeroSucursal,
+
+        p.nombre AS paisSucursal,
+        e.nombre AS estadoSucursal,
+        m.nombre AS municipioSucursal,
+        co.nombre AS coloniaSucursal,
+        co.ciudad AS ciudadSucursal,
+        co.codigo_postal AS codigoPostalSucursal
+
+    FROM colaborador AS c
+    INNER JOIN rol AS r  
+        ON r.id_rol = c.id_rol
+    INNER JOIN sucursal AS s  
+        ON s.id_sucursal = c.id_sucursal
+    LEFT JOIN pais AS p  
+        ON s.id_pais = p.id_pais
+    LEFT JOIN estado AS e 
+        ON s.id_estado = e.id_estado 
+    LEFT JOIN municipio AS m 
+        ON s.id_municipio = m.id_municipio
+    LEFT JOIN colonia AS co 
+        ON s.id_colonia = co.id_colonia
+    WHERE c.numero_personal = #{numero_personal}  
+    AND c.contrasena = #{contrasena};
+</select>
+
+
 
 
 </mapper>
