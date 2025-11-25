@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
 <mapper namespace="colaborador">
     <select id="obtener-todos" resultType="pojo.Colaborador">
         SELECT 
@@ -12,20 +11,15 @@
             c.apellido_paterno AS apellidoPaterno,
             c.apellido_materno AS apellidoMaterno,
             c.correo AS correo,
-
             c.id_rol AS idRol,
             r.nombre AS rol,
-
             c.id_sucursal AS idSucursal,
             s.nombre_corto AS sucursal,
-
             c.id_unidad AS idUnidad,
-
             CASE 
                 WHEN r.nombre = 'Conductor' THEN c.numero_licencia
                 ELSE NULL
             END AS numeroLicencia
-
         FROM colaborador AS c
         INNER JOIN rol AS r ON c.id_rol = r.id_rol
         INNER JOIN sucursal AS s ON c.id_sucursal = s.id_sucursal
@@ -57,6 +51,18 @@
         WHERE id_colaborador = #{idColaborador};
     </select>
     
+    <select id="obtener-id-por-curp" parameterType="string" resultType="int">
+        SELECT id_colaborador 
+        FROM colaborador
+        WHERE curp = #{curp};
+    </select>
+    
+    <select id="obtener-id-por-licencia" parameterType="string" resultType="int">
+        SELECT id_colaborador 
+        FROM colaborador
+        WHERE numero_licencia = #{numeroLicencia};
+    </select>
+    
     <update id="editar" parameterType="pojo.Colaborador">
         UPDATE colaborador
         SET
@@ -69,18 +75,18 @@
             id_sucursal = #{idSucursal}
         WHERE id_colaborador = #{idColaborador};
     </update>
-
+    
     <delete id="eliminar" parameterType="int">
         DELETE FROM colaborador
         WHERE id_colaborador = #{idColaborador};
     </delete>
-
+    
     <select id="obtener-rol-colaborador" parameterType="int" resultType="int">
         SELECT id_rol
         FROM colaborador
         WHERE id_colaborador = #{idColaborador};
     </select>
-
+    
     <select id="obtener-unidad-asignada" parameterType="int" resultType="int">
         SELECT id_unidad
         FROM colaborador
@@ -98,7 +104,7 @@
         SET id_unidad = #{idUnidad}
         WHERE id_colaborador = #{idColaborador};
     </update>
-
+    
     <update id="desasignar-unidad" parameterType="int">
         UPDATE colaborador
         SET id_unidad = NULL
