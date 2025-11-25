@@ -1,8 +1,5 @@
 package dominio;
 
-import dto.ColoniaDTO;
-import dto.DatosCodigoPostalDTO;
-import dto.DireccionCompletaDTO;
 import dto.Respuesta;
 import java.util.List;
 import modelo.mybatis.MyBatisUtil;
@@ -21,14 +18,13 @@ public class SucursalImp {
                 sucursales = conexionBD.selectList("sucursal.obtener-todos");
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                conexionBD.close();
             }
+            conexionBD.close();
         }
         return sucursales;
     }
 
-    public static Respuesta registrarSucursales(Sucursal sucursal) {
+    public static Respuesta registrarSucursal(Sucursal sucursal) {
         Respuesta respuesta = new Respuesta();
         respuesta.setError(true);
 
@@ -36,13 +32,8 @@ public class SucursalImp {
 
         if (conexionBD != null) {
             try {
-                // Validar CP y colonia
-                if (!completarDireccionDesdeCP(sucursal, respuesta)) {
-                    return respuesta;
-                }
-
-                // Generar código de sucursal
-                String codigoGenerado = generarCodigoSucursal(conexionBD, sucursal);
+                
+                String codigoGenerado = generarCodigoSucursal(conexionBD, sucursal.getIdMunicipio());
                 sucursal.setCodigo(codigoGenerado);
 
                 int filas = conexionBD.insert("sucursal.registrar", sucursal);
@@ -58,10 +49,8 @@ public class SucursalImp {
 
             } catch (Exception e) {
                 respuesta.setMensaje("Error al registrar la sucursal: " + e.getMessage());
-            } finally {
-                conexionBD.close();
-            }
-
+            } 
+            conexionBD.close();
         } else {
             respuesta.setMensaje(Constantes.MSJ_ERROR_BD);
         }
@@ -80,13 +69,6 @@ public class SucursalImp {
                 if (esSucursalInactiva(conexionBD, sucursal.getIdSucursal())) {
                     respuesta.setMensaje(Constantes.MSJ_ERROR_INACTIVA + Constantes.SUCURSAL);
                     return respuesta;
-                }
-
-                // Validar CP solo si se envió un nuevo valor
-                if (sucursal.getCodigoPostal() != null && !sucursal.getCodigoPostal().isEmpty()) {
-                    if (!completarDireccionDesdeCP(sucursal, respuesta)) {
-                        return respuesta;
-                    }
                 }
 
                 int filas = conexionBD.update("sucursal.editar", sucursal);
@@ -151,79 +133,36 @@ public class SucursalImp {
         return respuesta;
     }
 
-    private static boolean completarDireccionDesdeCP(Sucursal sucursal, Respuesta respuesta) {
+    private static String generarCodigoSucursal(SqlSession conexionBD, int idMunicipio) {
 
-        // Obtener la dirección base del CP (país, estado, municipio)
-        DatosCodigoPostalDTO datos = DireccionImp.obtenerDatosPorCP(sucursal.getCodigoPostal());
-
-        if (datos == null || datos.isError()) {
-            respuesta.setMensaje(datos != null ? datos.getMensaje() :
-                    "No se encontró información del código postal ingresado.");
-            return false;
-        }
-
-        // Obtener todas las colonias del CP
-        List<ColoniaDTO> colonias = DireccionImp.obtenerColoniasPorCP(sucursal.getCodigoPostal());
-
-        if (colonias == null || colonias.isEmpty()) {
-            respuesta.setMensaje("El código postal no tiene colonias registradas.");
-            return false;
-        }
-
-        // Validar si la colonia seleccionada pertenece al CP
-        boolean coloniaValida = colonias.stream()
-                .anyMatch(c -> c.getIdColonia().equals(sucursal.getIdColonia()));
-
-        if (!coloniaValida) {
-            respuesta.setMensaje("La colonia seleccionada NO pertenece al código postal ingresado.");
-            return false;
-        }
-
-        // Asignar datos al POJO sucursal
-        sucursal.setIdPais(datos.getIdPais());
-        sucursal.setIdEstado(datos.getIdEstado());
-        sucursal.setIdMunicipio(datos.getIdMunicipio());
-
-        return true;
-    }
-
-    private static String generarCodigoSucursal(SqlSession conexionBD, Sucursal sucursal) {
-
-        DatosCodigoPostalDTO municipio = DireccionImp.obtenerMunicipioPorId(sucursal.getIdMunicipio());
-
-        if (municipio == null || municipio.isError()) {
-            throw new RuntimeException("No se encontró información del municipio.");
-        }
-
-        String nombreMunicipio = municipio.getMunicipio();
-        int codigoMunicipio = municipio.getIdMunicipio();
-
-        // Obtener el consecutivo REAL
         Integer maxConsecutivo = conexionBD.selectOne(
                 "sucursal.obtener-maximo-consecutivo",
-                sucursal.getIdMunicipio()
+                idMunicipio
         );
 
-        if (maxConsecutivo == null) maxConsecutivo = 0;
+        if (maxConsecutivo == null) {
+            maxConsecutivo = 0;
+        }
 
         int contador = maxConsecutivo + 1;
         String cont = String.format("%02d", contador);
 
-        String nombreCorto = nombreMunicipio.replaceAll("\\s+", "").toUpperCase();
-        if (nombreCorto.length() >= 3) {
-            nombreCorto = nombreCorto.substring(0, 3);
-        }
-
-        return Constantes.PREFIJO_SUCURSAL + nombreCorto + codigoMunicipio + "-" + cont;
+        return Constantes.PREFIJO_SUCURSAL + idMunicipio + "-" + cont;
     }
 
     private static boolean tieneDependencias(SqlSession conexionBD, int idSucursal) {
-        Integer dependencias = conexionBD.selectOne("sucursal.verificar-dependencias-sucursal", idSucursal);
+        Integer dependencias = conexionBD.selectOne(
+                "sucursal.verificar-dependencias-sucursal",
+                idSucursal
+        );
         return dependencias != null && dependencias > 0;
     }
 
     private static boolean esSucursalInactiva(SqlSession conexionBD, int idSucursal) {
-        Integer estatus = conexionBD.selectOne("sucursal.obtener-estatus-sucursal", idSucursal);
+        Integer estatus = conexionBD.selectOne(
+                "sucursal.obtener-estatus-sucursal",
+                idSucursal
+        );
         return estatus != null && estatus == Constantes.ESTATUS_INACTIVO;
     }
 }

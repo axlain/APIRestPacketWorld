@@ -32,7 +32,7 @@ public class SucursalWS {
         Gson gson = new Gson();
         try {
             Sucursal sucursal = gson.fromJson(json, Sucursal.class);
-            return SucursalImp.registrarSucursales(sucursal);
+            return SucursalImp.registrarSucursal(sucursal);
         } catch (Exception e) {
             throw new BadRequestException(e.getMessage());
         }

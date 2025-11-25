@@ -110,4 +110,12 @@
         SET id_unidad = NULL
         WHERE id_colaborador = #{idColaborador};
     </update>
+    
+    <select id="conductor-tiene-unidad" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM unidad
+        WHERE id_conductor = #{idConductor} 
+          AND estatus = 1;  
+    </select>
+
 </mapper>
