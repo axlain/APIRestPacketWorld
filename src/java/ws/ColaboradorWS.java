@@ -26,6 +26,13 @@ public class ColaboradorWS {
          return ColaboradorImp.obtenerColaborador();
     }
     
+    @Path ("obtener-conductores")
+    @GET 
+    @Produces (MediaType.APPLICATION_JSON)
+    public List<Colaborador> obtenerConductoresr(){
+         return ColaboradorImp.obtenerConductores();
+    }
+    
     @Path("registrar")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

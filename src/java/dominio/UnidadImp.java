@@ -173,7 +173,7 @@ public class UnidadImp {
         return respuesta;
     }
 
-    // ?Métodos auxiliares
+    // Métodos auxiliares
     private static String generarNumeroInterno(int anio, String vin) {
         try {
             if (vin == null || vin.trim().length() < 4 || anio <= 0) {

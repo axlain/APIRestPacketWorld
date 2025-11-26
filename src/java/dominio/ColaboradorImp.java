@@ -29,6 +29,22 @@ public class ColaboradorImp {
         return colaboradores;
     }
     
+    public static List<Colaborador> obtenerConductores() {
+        SqlSession conexionBD = MyBatisUtil.getSession();
+        List<Colaborador> conductores = null;
+
+        if (conexionBD != null) {
+            try {
+                conductores = conexionBD.selectList("colaborador.obtener-conductores");
+            } catch (Exception e) {
+                e.printStackTrace();
+            } 
+            conexionBD.close();
+        }
+
+        return conductores;
+    }
+    
     public static Respuesta registrarColaborador(Colaborador colaborador) {
         Respuesta respuesta = new Respuesta();
         respuesta.setError(true);
@@ -266,6 +282,12 @@ public class ColaboradorImp {
                 }
 
                 if (idUnidad == null) {
+                    Integer envios = conexionBD.selectOne("colaborador.tiene-envios", idColaborador);
+                    if (envios != null && envios > 0) {
+                        respuesta.setMensaje("No se puede desasignar al conductor porque tiene envíos registrados.");
+                        return respuesta;
+                    }
+
                     return desasignarUnidad(conexionBD, idColaborador);
                 }
                 error = verificarUnidadActiva(conexionBD, idUnidad);
@@ -295,6 +317,7 @@ public class ColaboradorImp {
         return respuesta;
     }
 
+    
 
 
     //metodos secundarios

@@ -121,11 +121,32 @@
 
     
     <select id="tiene-envios" parameterType="int" resultType="int">
-        SELECT COUNT(*)
-        FROM envio
-        WHERE id_conductor = #{idColaborador}
-           OR id_creador = #{idColaborador}
-           OR id_entrega = #{idColaborador};
+        SELECT COUNT(*) 
+        FROM envio  
+        WHERE id_conductor = #{idColaborador} 
+           OR id_creador = #{idColaborador};
+    </select>
+    
+    <select id="obtener-conductores" resultType="pojo.Colaborador">
+        SELECT 
+            c.id_colaborador AS idColaborador,
+            c.numero_personal AS numeroPersonal,
+            c.curp AS curp,
+            c.nombre AS nombre,
+            c.apellido_paterno AS apellidoPaterno,
+            c.apellido_materno AS apellidoMaterno,
+            c.correo AS correo,
+            c.id_rol AS idRol,
+            r.nombre AS rol,
+            c.id_sucursal AS idSucursal,
+            s.nombre_corto AS sucursal,
+            c.id_unidad AS idUnidad,
+            c.numero_licencia AS numeroLicencia
+        FROM colaborador AS c
+        INNER JOIN rol AS r ON c.id_rol = r.id_rol
+        INNER JOIN sucursal AS s ON c.id_sucursal = s.id_sucursal
+        WHERE c.id_rol = 3
+        ORDER BY c.nombre ASC;
     </select>
 
 
