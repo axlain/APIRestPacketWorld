@@ -13,10 +13,11 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import static javax.ws.rs.client.Entity.json;
 import javax.ws.rs.core.MediaType;
 import pojo.Unidad;
 
-    @Path("unidad")
+@Path("unidad")
 public class UnidadWS {
     @Path ("obtener-todos")
     @GET 
@@ -53,16 +54,15 @@ public class UnidadWS {
         }
     }
     
-    @Path("dar-de-baja/{idUnidad}")
+    @Path("dar-de-baja")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Respuesta darDeBaja(@PathParam("idUnidad") int idUnidad, String json) {
-        Gson gson = new Gson();
+    public Respuesta darDeBaja(String json) {
+       Gson gson = new Gson();
         try {
-            Map<String, String> datos = gson.fromJson(json, Map.class);
-            String motivo = datos.get("motivoBaja");
-            return UnidadImp.darDeBajaUnidad(idUnidad, motivo);
+            Unidad unidad = gson.fromJson(json, Unidad.class);
+            return UnidadImp.darDeBajaUnidad(unidad.getIdUnidad(), unidad.getMotivoBaja());
         } catch (Exception e) {
             throw new BadRequestException(e.getMessage());
         }

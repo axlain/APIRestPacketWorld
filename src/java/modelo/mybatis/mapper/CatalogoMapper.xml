@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="catalogo">
+
+    <select id="obtener-roles" resultType="pojo.Rol">
+        SELECT 
+            id_rol AS idRol,
+            nombre 
+        FROM rol 
+    </select>
+    
+    <select id="obtener-tipo-unidades" resultType="pojo.TipoUnidad">
+        SELECT 
+            id_tipo_unidad AS idTipoUnidad, 
+            nombre 
+        FROM tipo_unidad 
+    </select>
+    
+
+</mapper>
