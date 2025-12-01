@@ -5,17 +5,20 @@ public class Municipio {
     private Integer codigo;
     private String nombre;
     private Integer idEstado;
-
+    private String estado;
+    
     public Municipio() {
     }
 
-    public Municipio(Integer idMunicipio, Integer codigo, String nombre, Integer idEstado) {
+    public Municipio(Integer idMunicipio, Integer codigo, String nombre, Integer idEstado, String estado) {
         this.idMunicipio = idMunicipio;
         this.codigo = codigo;
         this.nombre = nombre;
         this.idEstado = idEstado;
+        this.estado = estado;
     }
 
+   
     public Integer getIdMunicipio() {
         return idMunicipio;
     }
@@ -46,6 +49,14 @@ public class Municipio {
 
     public void setIdEstado(Integer idEstado) {
         this.idEstado = idEstado;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
     
     

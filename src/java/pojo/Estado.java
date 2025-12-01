@@ -4,14 +4,16 @@ public class Estado {
     private Integer idEstado;
     private String nombre;
     private Integer idPais;
-
+    private String pais;
+    
     public Estado() {
     }
 
-    public Estado(Integer idEstado, String nombre, Integer idPais) {
+    public Estado(Integer idEstado, String nombre, Integer idPais, String pais) {
         this.idEstado = idEstado;
         this.nombre = nombre;
         this.idPais = idPais;
+        this.pais = pais;
     }
 
     public Integer getIdEstado() {
@@ -36,6 +38,14 @@ public class Estado {
 
     public void setIdPais(Integer idPais) {
         this.idPais = idPais;
+    }
+
+    public String getPais() {
+        return pais;
+    }
+
+    public void setPais(String pais) {
+        this.pais = pais;
     }
     
     

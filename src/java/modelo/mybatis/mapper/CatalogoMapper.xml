@@ -19,5 +19,47 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM tipo_unidad 
     </select>
     
+    <select id="obtener-paises" resultType="pojo.Pais">
+        SELECT
+            id_pais      AS idPais,
+            nombre       AS nombre
+        FROM pais
+        ORDER BY nombre;
+    </select>
+    
+     <select id="obtener-estados" resultType="pojo.Estado">
+        SELECT 
+            e.id_estado   AS idEstado,
+            e.nombre      AS nombre,
+            e.id_pais     AS idPais,
+            p.nombre      AS pais
+        FROM estado e
+        INNER JOIN pais p ON p.id_pais = e.id_pais
+        ORDER BY e.nombre;
+    </select>
+    
+    <select id="obtener-municipios" resultType="pojo.Municipio">
+        SELECT
+            m.id_municipio  AS idMunicipio,
+            m.codigo        AS codigo,
+            m.nombre        AS nombre,
+            m.id_estado     AS idEstado,
+            e.nombre        AS estado
+        FROM municipio m
+        INNER JOIN estado e ON e.id_estado = m.id_estado
+        ORDER BY m.nombre;
+    </select>
+    
+     <select id="obtener-colonias" resultType="pojo.Colonia">
+        SELECT
+            c.id_colonia        AS idColonia,
+            c.nombre            AS nombre,
+            c.ciudad            AS ciudad, 
+            c.asentamiento      AS asentamiento,
+            c.codigo_municipio  AS codigoMunicipio,
+            c.codigo_postal     AS codigoPostal
+        FROM colonia c
+        ORDER BY c.nombre;
+    </select>
 
 </mapper>
