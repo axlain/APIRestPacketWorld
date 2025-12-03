@@ -2,8 +2,8 @@ package ws;
 
 import com.google.gson.Gson;
 import dominio.DireccionImp;
-import dto.ColoniaDTO;
-import dto.DatosCodigoPostalDTO;
+import dto.RSColonia;
+import dto.RSDatosCodigoPostal;
 import java.util.List;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -15,7 +15,7 @@ public class DireccionWS {
     @Path("obtener-datos-por-cp/{codigoPostal}")
     @Produces(MediaType.APPLICATION_JSON)
     public String obtenerDatosPorCP(@PathParam("codigoPostal") String codigoPostal) {
-        DatosCodigoPostalDTO datos = DireccionImp.obtenerDatosPorCP(codigoPostal);
+        RSDatosCodigoPostal datos = DireccionImp.obtenerDatosPorCP(codigoPostal);
         return new Gson().toJson(datos);
     }
 
@@ -23,7 +23,7 @@ public class DireccionWS {
     @Path("obtener-colonias-por-cp/{codigoPostal}")
     @Produces(MediaType.APPLICATION_JSON)
     public String obtenerColoniasPorCP(@PathParam("codigoPostal") String codigoPostal) {
-        List<ColoniaDTO> colonias = DireccionImp.obtenerColoniasPorCP(codigoPostal);
+        List<RSColonia> colonias = DireccionImp.obtenerColoniasPorCP(codigoPostal);
         return new Gson().toJson(colonias);
     }
 }

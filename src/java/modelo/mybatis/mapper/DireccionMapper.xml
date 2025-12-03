@@ -4,7 +4,7 @@
 
 <mapper namespace="direccion">
 
-    <select id="obtener-datos-por-cp" parameterType="string" resultType="dto.DatosCodigoPostalDTO">
+    <select id="obtener-datos-por-cp" parameterType="string" resultType="dto.RSDatosCodigoPostal">
         SELECT DISTINCT
             p.id_pais AS idPais,
             p.nombre AS pais,
@@ -20,7 +20,7 @@
         WHERE c.codigo_postal = #{codigoPostal};
     </select>
 
-    <select id="obtener-colonias-por-cp" parameterType="string" resultType="dto.ColoniaDTO">
+    <select id="obtener-colonias-por-cp" parameterType="string" resultType="dto.RSColonia">
         SELECT
             id_colonia AS idColonia,
             nombre AS colonia,
@@ -29,12 +29,68 @@
         WHERE codigo_postal = #{codigoPostal};
     </select>
 
-    <select id="obtener-municipio" parameterType="int" resultType="dto.DatosCodigoPostalDTO">
+    <select id="obtener-municipio" parameterType="int" resultType="pojo.Municipio">
         SELECT 
             id_municipio AS idMunicipio,
-            nombre AS municipio
+            nombre,
+            id_estado AS idEstado,
+            codigo
         FROM municipio
         WHERE id_municipio = #{idMunicipio};
+    </select>
+    
+    <select id="obtener-codigo-municipio" parameterType="int" resultType="int">
+        SELECT codigo
+        FROM municipio
+        WHERE id_municipio = #{idMunicipio};
+    </select>
+    
+    
+    <!-- Consultas para comprobar que existan tanto pais, estado, municipio y colonia -->
+    <select id="validar-pais-existe" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM pais
+        WHERE id_pais = #{idPais};
+    </select>
+    
+    <select id="validar-estado-existe" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM estado
+        WHERE id_estado = #{idEstado};
+    </select>
+
+    <select id="validar-municipio-existe" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM municipio
+        WHERE id_municipio = #{idMunicipio};
+    </select>
+
+    <select id="validar-colonia-existe" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM colonia
+        WHERE id_colonia = #{idColonia};
+    </select>
+    
+    <!-- Consultas para comprobar que estado este en pais, municipio este en estado, y colonia este en municipio -->
+    <select id="validar-estado-pais" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM estado
+        WHERE id_estado = #{idEstado}
+        AND id_pais = #{idPais};
+    </select>
+
+    <select id="validar-municipio-estado" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM municipio
+        WHERE id_municipio = #{idMunicipio}
+        AND id_estado = #{idEstado};
+    </select>
+
+    <select id="validar-colonia-municipio" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM colonia
+        WHERE id_colonia = #{idColonia}
+        AND codigo_municipio = #{codigoMunicipio};
     </select>
 
 </mapper>

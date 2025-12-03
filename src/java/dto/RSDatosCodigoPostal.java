@@ -1,6 +1,6 @@
 package dto;
 
-public class DatosCodigoPostalDTO {
+public class RSDatosCodigoPostal {
 
     private boolean error;
     private String mensaje;
@@ -16,10 +16,10 @@ public class DatosCodigoPostalDTO {
 
     private String codigoPostal;
 
-    public DatosCodigoPostalDTO() {
+    public RSDatosCodigoPostal() {
     }
 
-    public DatosCodigoPostalDTO(boolean error, String mensaje, Integer idPais, String pais, Integer idEstado, String estado, Integer idMunicipio, String municipio, String codigoPostal) {
+    public RSDatosCodigoPostal(boolean error, String mensaje, Integer idPais, String pais, Integer idEstado, String estado, Integer idMunicipio, String municipio, String codigoPostal) {
         this.error = error;
         this.mensaje = mensaje;
         this.idPais = idPais;

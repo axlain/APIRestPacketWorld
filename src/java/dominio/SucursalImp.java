@@ -35,7 +35,19 @@ public class SucursalImp {
                 
                 String codigoGenerado = generarCodigoSucursal(conexionBD, sucursal.getIdMunicipio());
                 sucursal.setCodigo(codigoGenerado);
+                
+                // Validar la dirección antes de registrar
+                Respuesta validacion = DireccionImp.validarDireccionCompleta(
+                        sucursal.getIdPais(),
+                        sucursal.getIdEstado(),
+                        sucursal.getIdMunicipio(),
+                        sucursal.getIdColonia()
+                );
 
+                if (validacion.isError()) {
+                    return validacion;  
+                }
+                
                 int filas = conexionBD.insert("sucursal.registrar", sucursal);
                 conexionBD.commit();
 
@@ -69,6 +81,18 @@ public class SucursalImp {
                 if (esSucursalInactiva(conexionBD, sucursal.getIdSucursal())) {
                     respuesta.setMensaje(Constantes.MSJ_ERROR_INACTIVA + Constantes.SUCURSAL);
                     return respuesta;
+                }
+                
+                // Validar la dirección antes de registrar
+                Respuesta validacion = DireccionImp.validarDireccionCompleta(
+                        sucursal.getIdPais(),
+                        sucursal.getIdEstado(),
+                        sucursal.getIdMunicipio(),
+                        sucursal.getIdColonia()
+                );
+
+                if (validacion.isError()) {
+                    return validacion;  
                 }
 
                 int filas = conexionBD.update("sucursal.editar", sucursal);

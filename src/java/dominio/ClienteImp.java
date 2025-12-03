@@ -32,6 +32,19 @@ public class ClienteImp {
 
         if (conexion != null) {
             try {
+
+                // Validar la dirección antes de registrar
+                Respuesta validacion = DireccionImp.validarDireccionCompleta(
+                        cliente.getIdPais(),
+                        cliente.getIdEstado(),
+                        cliente.getIdMunicipio(),
+                        cliente.getIdColonia()
+                );
+
+                if (validacion.isError()) {
+                    return validacion;  
+                }
+
                 int filasAfectadas = conexion.insert("cliente.registrar", cliente);
                 conexion.commit();
 
@@ -66,6 +79,18 @@ public class ClienteImp {
                 if (existe == null || existe == 0) {
                     respuesta.setMensaje("El cliente no existe.");
                     return respuesta;
+                }
+                
+                // Validar la dirección antes de registrar
+                Respuesta validacion = DireccionImp.validarDireccionCompleta(
+                        cliente.getIdPais(),
+                        cliente.getIdEstado(),
+                        cliente.getIdMunicipio(),
+                        cliente.getIdColonia()
+                );
+
+                if (validacion.isError()) {
+                    return validacion;  
                 }
 
                 int filasAfectadas = conexion.update("cliente.editar", cliente);

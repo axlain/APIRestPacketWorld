@@ -1,6 +1,6 @@
 package dto;
 
-public class ColoniaDTO {
+public class RSColonia {
 
     private boolean error;
     private String mensaje;
@@ -9,10 +9,10 @@ public class ColoniaDTO {
     private String colonia;
     private String codigoPostal;
 
-    public ColoniaDTO() {
+    public RSColonia() {
     }
 
-    public ColoniaDTO(boolean error, String mensaje, Integer idColonia, String colonia, String codigoPostal) {
+    public RSColonia(boolean error, String mensaje, Integer idColonia, String colonia, String codigoPostal) {
         this.error = error;
         this.mensaje = mensaje;
         this.idColonia = idColonia;

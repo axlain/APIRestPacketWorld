@@ -18,41 +18,52 @@ public class DestinatarioImp {
                 lista = conexion.selectList("destinatario.obtener-todos");
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                conexion.close();
-            }
+            } 
+            conexion.close();
         }
         return lista;
     }
 
     public static Respuesta registrarDestinatario(Destinatario destinatario) {
-        Respuesta r = new Respuesta();
-        r.setError(true);
+        Respuesta respuesta = new Respuesta();
+        respuesta.setError(true);
 
         SqlSession conexion = MyBatisUtil.getSession();
 
         if (conexion != null) {
             try {
                 
+                // Validar la dirección antes de registrar
+                Respuesta validacion = DireccionImp.validarDireccionCompleta(
+                        destinatario.getIdPais(),
+                        destinatario.getIdEstado(),
+                        destinatario.getIdMunicipio(),
+                        destinatario.getIdColonia()
+                );
+
+                if (validacion.isError()) {
+                    return validacion;  
+                }
+                
                 int filasAfectadas = conexion.insert("destinatario.registrar", destinatario);
                 conexion.commit();
 
                 if (filasAfectadas > 0) {
-                    r.setError(false);
-                    r.setMensaje(Constantes.MSJ_EXITO_REGISTRO + " el destinatario.");
+                    respuesta.setError(false);
+                    respuesta.setMensaje(Constantes.MSJ_EXITO_REGISTRO + " el destinatario.");
                 } else {
-                    r.setMensaje(Constantes.MSJ_ERROR_REGISTRO + " el destinatario.");
+                    respuesta.setMensaje(Constantes.MSJ_ERROR_REGISTRO + " el destinatario.");
                 }
 
             } catch (Exception e) {
-                r.setMensaje("Error al registrar destinatario: " + e.getMessage());
+                respuesta.setMensaje("Error al registrar destinatario: " + e.getMessage());
             }
             conexion.close();
         } else {
-            r.setMensaje(Constantes.MSJ_ERROR_BD);
+            respuesta.setMensaje(Constantes.MSJ_ERROR_BD);
         }
 
-        return r;
+        return respuesta;
     }
 
     public static Respuesta editarDestinatario(Destinatario destinatario) {
@@ -68,6 +79,18 @@ public class DestinatarioImp {
                 if (existe == null || existe == 0) {
                     respuesta.setMensaje("El destinatario no existe.");
                     return respuesta;
+                }
+                
+                // Validar la dirección antes de registrar
+                Respuesta validacion = DireccionImp.validarDireccionCompleta(
+                        destinatario.getIdPais(),
+                        destinatario.getIdEstado(),
+                        destinatario.getIdMunicipio(),
+                        destinatario.getIdColonia()
+                );
+
+                if (validacion.isError()) {
+                    return validacion;  
                 }
 
                 int filasAfectadas = conexion.update("destinatario.editar", destinatario);

@@ -234,3 +234,5 @@ INNER JOIN pais p ON e.id_pais = p.id_pais
 WHERE c.codigo_postal = '91193';
 
 
+DROP DATABASE packetworld;
+
