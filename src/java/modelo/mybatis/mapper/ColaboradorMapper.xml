@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="colaborador">
+    
     <select id="obtener-todos" resultType="pojo.Colaborador">
         SELECT 
             c.id_colaborador AS idColaborador,
@@ -148,5 +149,86 @@
         WHERE c.id_rol = 3
         ORDER BY c.nombre ASC;
     </select>
+    
+    <select id="buscar-por-nombre" parameterType="string" resultType="pojo.Colaborador">
+        SELECT 
+            c.id_colaborador AS idColaborador,
+            c.numero_personal AS numeroPersonal,
+            c.curp AS curp,
+            c.nombre AS nombre,
+            c.apellido_paterno AS apellidoPaterno,
+            c.apellido_materno AS apellidoMaterno,
+            c.correo AS correo,
+            c.id_rol AS idRol,
+            r.nombre AS rol,
+            c.id_sucursal AS idSucursal,
+            s.nombre_corto AS sucursal,
+            c.id_unidad AS idUnidad,
+            c.numero_licencia AS numeroLicencia
+        FROM colaborador c
+        INNER JOIN rol r ON c.id_rol = r.id_rol
+        INNER JOIN sucursal s ON c.id_sucursal = s.id_sucursal
+        WHERE 
+            c.nombre = #{nombre}
+            OR c.apellido_paterno = #{nombre}
+            OR c.apellido_materno = #{nombre};
+    </select>
+    
+    <select id="buscar-por-numero-personal" parameterType="string" resultType="pojo.Colaborador">
+        SELECT 
+            c.id_colaborador AS idColaborador,
+            c.numero_personal AS numeroPersonal,
+            c.curp AS curp,
+            c.nombre AS nombre,
+            c.apellido_paterno AS apellidoPaterno,
+            c.apellido_materno AS apellidoMaterno,
+            c.correo AS correo,
+            c.id_rol AS idRol,
+            r.nombre AS rol,
+            c.id_sucursal AS idSucursal,
+            s.nombre_corto AS sucursal,
+            c.id_unidad AS idUnidad,
+            c.numero_licencia AS numeroLicencia
+        FROM colaborador c
+        INNER JOIN rol r ON c.id_rol = r.id_rol
+        INNER JOIN sucursal s ON c.id_sucursal = s.id_sucursal
+        WHERE c.numero_personal = #{numeroPersonal};
+    </select>
+
+    <select id="buscar-por-rol" parameterType="string" resultType="pojo.Colaborador">
+        SELECT 
+            c.id_colaborador AS idColaborador,
+            c.numero_personal AS numeroPersonal,
+            c.curp AS curp,
+            c.nombre AS nombre,
+            c.apellido_paterno AS apellidoPaterno,
+            c.apellido_materno AS apellidoMaterno,
+            c.correo AS correo,
+            c.id_rol AS idRol,
+            r.nombre AS rol,
+            c.id_sucursal AS idSucursal,
+            s.nombre_corto AS sucursal,
+            c.id_unidad AS idUnidad,
+            c.numero_licencia AS numeroLicencia
+        FROM colaborador c
+        INNER JOIN rol r ON c.id_rol = r.id_rol
+        INNER JOIN sucursal s ON c.id_sucursal = s.id_sucursal
+        WHERE r.nombre = #{rol};
+    </select>
+    
+    <update id="guardar-foto" parameterType="pojo.Colaborador">
+        UPDATE colaborador
+        SET fotografia = #{foto}
+        WHERE id_colaborador = #{idColaborador};
+    </update>
+    
+    <select id="obtener-foto" parameterType="int" resultType="pojo.Colaborador">
+        SELECT 
+            id_colaborador AS idColaborador,
+            TO_BASE64(fotografia) AS fotoBase64
+        FROM colaborador
+        WHERE id_colaborador = #{idColaborador};
+    </select>
+
 
 </mapper>

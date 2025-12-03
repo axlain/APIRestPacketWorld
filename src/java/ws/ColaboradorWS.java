@@ -13,6 +13,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import pojo.Colaborador;
 
@@ -88,6 +89,59 @@ public class ColaboradorWS {
     public Respuesta desasignarUnidad(
             @PathParam("idColaborador") int idColaborador) {
         return ColaboradorImp.asignarUnidad(idColaborador, null);
+    }
+    
+    @Path("buscar-por-nombre")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Colaborador> buscarPorNombre(@QueryParam("nombre") String nombre) {
+        try {
+            return ColaboradorImp.buscarPorNombre(nombre);
+        } catch (Exception e) {
+            throw new BadRequestException(e.getMessage());
+        }
+    }
+    
+   @Path("buscar-por-numero-personal")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Colaborador> buscarPorNumeroPersonal(@QueryParam("numeroPersonal") String numeroPersonal) {
+        try {
+            return ColaboradorImp.buscarPorNumeroPersonal(numeroPersonal);
+        } catch (Exception e) {
+            throw new BadRequestException(e.getMessage());
+        }
+    }
+    
+    @Path("buscar-por-rol")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Colaborador> buscarPorRol(@QueryParam("rol") String rol) {
+        try {
+            return ColaboradorImp.buscarPorRol(rol);
+        } catch (Exception e) {
+            throw new BadRequestException(e.getMessage());
+        }
+    }
+    
+    @Path("subir-foto/{idColaborador}")
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    public Respuesta subirFoto(@PathParam("idColaborador")Integer idColaborador, byte[] foto){
+        if(idColaborador != null && idColaborador > 0 && foto.length > 0){
+            return ColaboradorImp.guardarFoto(idColaborador, foto);
+        }
+        throw new BadRequestException();
+    }
+            
+    @Path("obtener-foto/{idColaborador}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Colaborador obtenerFoto(@PathParam("idColaborador") Integer idColaborador) {
+        if (idColaborador != null && idColaborador > 0) {
+            return ColaboradorImp.obtenerFoto(idColaborador);
+        }
+        throw new BadRequestException();
     }
 
 }

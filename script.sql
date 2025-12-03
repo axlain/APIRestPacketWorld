@@ -176,6 +176,28 @@ DELETE  FROM sucursal WHERE id_sucursal = 10;
 SELECT * FROM estatus_sucursal;
 
 SELECT * FROM cliente;
+SELECT 
+    c.id_cliente,
+    c.nombre,
+    c.apellido_paterno,
+    c.apellido_materno,
+    c.calle,
+    c.numero,
+    c.telefono,
+    c.correo,
+
+    p.nombre AS pais,
+    e.nombre AS estado,
+    m.nombre AS municipio,
+    co.nombre AS colonia,
+    co.codigo_postal AS codigo_postal
+
+FROM cliente c
+LEFT JOIN pais p        ON c.id_pais = p.id_pais
+LEFT JOIN estado e      ON c.id_estado = e.id_estado
+LEFT JOIN municipio m   ON c.id_municipio = m.id_municipio
+LEFT JOIN colonia co    ON c.id_colonia = co.id_colonia;
+
 
 SELECT * FROM destinatario;
 DESCRIBE destinatario;

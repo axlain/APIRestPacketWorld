@@ -129,10 +129,11 @@ public class ColaboradorImp {
 
         if (conexionBD != null) {
             try {
+                
                 // Verificar si el colaborador existe
-                Integer existe = conexionBD.selectOne("colaborador.verificar-existe", colaborador.getIdColaborador());
-                if (existe == null || existe == 0) {
-                    respuesta.setMensaje("El colaborador no existe en la base de datos.");
+                String verificarColaborador = verificarColaboradorExiste(conexionBD, colaborador.getIdColaborador());
+                if (verificarColaborador != null) {
+                    respuesta.setMensaje(verificarColaborador);
                     return respuesta;
                 }
                 
@@ -220,9 +221,9 @@ public class ColaboradorImp {
             try {
 
                 // Verificar si el colaborador existe
-                Integer existe = conexionBD.selectOne("colaborador.verificar-existe", idColaborador);
-                if (existe == null || existe == 0) {
-                    respuesta.setMensaje("El colaborador no existe en la base de datos.");
+                String verificarColaborador = verificarColaboradorExiste(conexionBD, idColaborador);
+                if (verificarColaborador != null) {
+                    respuesta.setMensaje(verificarColaborador);
                     return respuesta;
                 }
                 
@@ -275,9 +276,9 @@ public class ColaboradorImp {
         if (conexionBD != null) {
             try {
 
-                String error = verificarColaboradorExisteYEsConductor(conexionBD, idColaborador);
-                if (error != null) {
-                    respuesta.setMensaje(error);
+                String verificarColaboradorConductor = verificarColaboradorExisteYEsConductor(conexionBD, idColaborador);
+                if (verificarColaboradorConductor != null) {
+                    respuesta.setMensaje(verificarColaboradorConductor);
                     return respuesta;
                 }
 
@@ -290,37 +291,145 @@ public class ColaboradorImp {
 
                     return desasignarUnidad(conexionBD, idColaborador);
                 }
-                error = verificarUnidadActiva(conexionBD, idUnidad);
-                if (error != null) {
-                    respuesta.setMensaje(error);
+                
+                verificarColaboradorConductor = verificarUnidadActiva(conexionBD, idUnidad);
+                
+                if (verificarColaboradorConductor != null) {
+                    respuesta.setMensaje(verificarColaboradorConductor);
                     return respuesta;
                 }
 
                 Integer unidadActual = obtenerUnidadActual(conexionBD, idColaborador);
-                error = unidadEstaOcupadaPorOtro(conexionBD, idUnidad, unidadActual);
-                if (error != null) {
-                    respuesta.setMensaje(error);
+                verificarColaboradorConductor = unidadEstaOcupadaPorOtro(conexionBD, idUnidad, unidadActual);
+                
+                if (verificarColaboradorConductor != null) {
+                    respuesta.setMensaje(verificarColaboradorConductor);
                     return respuesta;
                 }
                 respuesta = asignarUnidadAConductor(conexionBD, idColaborador, idUnidad);
 
             } catch (Exception e) {
                 respuesta.setMensaje("Error al asignar unidad: " + e.getMessage());
-            } finally {
-                conexionBD.close();
-            }
-
+            } 
+            conexionBD.close();
         } else {
             respuesta.setMensaje(Constantes.MSJ_ERROR_BD);
         }
 
         return respuesta;
     }
-
     
+    public static List<Colaborador> buscarPorNombre(String nombre) {
+        SqlSession conexionBD = MyBatisUtil.getSession();
+        List<Colaborador> lista = null;
 
+        if (conexionBD != null) {
+            try {
+                lista = conexionBD.selectList("colaborador.buscar-por-nombre", nombre);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            conexionBD.close();
+        }
 
-    //metodos secundarios
+        return lista;
+    }
+    
+    public static List<Colaborador> buscarPorNumeroPersonal(String numeroPersonal) {
+        SqlSession conexionBD = MyBatisUtil.getSession();
+        List<Colaborador> lista = null;
+
+        if (conexionBD != null) {
+            try {
+                lista = conexionBD.selectList("colaborador.buscar-por-numero-personal", numeroPersonal);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } 
+            conexionBD.close();
+        }
+
+        return lista;
+    }
+    
+    public static List<Colaborador> buscarPorRol(String rol) {
+        SqlSession conexionBD = MyBatisUtil.getSession();
+        List<Colaborador> lista = null;
+
+        if (conexionBD != null) {
+            try {
+                lista = conexionBD.selectList("colaborador.buscar-por-rol", rol);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } 
+            conexionBD.close();
+        }
+
+        return lista;
+    }
+
+    public static Respuesta guardarFoto(int idColaborador, byte[] foto){
+        Respuesta respuesta = new Respuesta();
+        respuesta.setError(true);
+        SqlSession conexionBD = MyBatisUtil.getSession();
+        
+        if(conexionBD != null){
+            try{
+                
+                // Verificar si el colaborador existe
+                String verificarColaborador = verificarColaboradorExiste(conexionBD, idColaborador);
+                if (verificarColaborador != null) {
+                    respuesta.setMensaje(verificarColaborador);
+                    return respuesta;
+                }
+                
+                Colaborador colaborador = new Colaborador();
+                colaborador.setIdColaborador(idColaborador);
+                colaborador.setFoto(foto);
+                
+                int filasAfectadas = conexionBD.update("colaborador.guardar-foto", colaborador);
+                conexionBD.commit();
+                
+                if(filasAfectadas > 0){
+                    respuesta.setError(false);
+                    respuesta.setMensaje("La fotografía del colaborador ha sido guardad éxiitosamente");
+                } else {
+                    respuesta.setMensaje("Lo sentimos la fotograía no se logro guardar");
+                }
+                conexionBD.close();
+            } catch (Exception e){
+               respuesta.setMensaje(e.getMessage());
+           }
+       } else {
+           respuesta.setMensaje(Constantes.MSJ_ERROR_BD);
+       }
+        
+       return respuesta;
+    }
+    
+    public static Colaborador obtenerFoto(int idColaborador){
+        Colaborador colaborador = null;
+        SqlSession conexionBD = MyBatisUtil.getSession();
+        
+        if(conexionBD != null){
+            try{
+                
+                // Verificar si el colaborador existe
+                String verificarColaborador = verificarColaboradorExiste(conexionBD, idColaborador);
+                if (verificarColaborador != null) {
+                    return null;
+                }
+                
+                colaborador = conexionBD.selectOne("colaborador.obtener-foto", idColaborador);
+                conexionBD.close();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+       } 
+        
+       return colaborador;
+    }
+
+    //Metodos secundarios
     private static String generarNumeroPersonal(String curp, String contrasena) {
         try {
             if (curp == null || contrasena == null || curp.length() < 10 || contrasena.length() < 2) {
@@ -358,6 +467,16 @@ public class ColaboradorImp {
         return resultado.toString();
     }
     
+    private static String verificarColaboradorExiste(SqlSession conexionBD, int idColaborador) {
+        Integer existe = conexionBD.selectOne("colaborador.verificar-existe", idColaborador);
+
+        if (existe == null || existe == 0) {
+            return "El colaborador no existe en la base de datos.";
+        }
+
+        return null; 
+    }
+
     private static String verificarColaboradorExisteYEsConductor(SqlSession conexionBD, int idColaborador) {
         Integer rol = conexionBD.selectOne("colaborador.obtener-rol-colaborador", idColaborador);
 
@@ -422,8 +541,8 @@ public class ColaboradorImp {
     }
     
     private static Respuesta asignarUnidadAConductor(SqlSession conexionBD, int idColaborador, int idUnidad) {
-        Respuesta r = new Respuesta();
-        r.setError(true);
+        Respuesta respuesta = new Respuesta();
+        respuesta.setError(true);
 
         try {
             Map<String, Object> params = new HashMap<>();
@@ -434,18 +553,17 @@ public class ColaboradorImp {
             conexionBD.commit();
 
             if (filas > 0) {
-                r.setError(false);
-                r.setMensaje("Unidad asignada correctamente al conductor.");
+                respuesta.setError(false);
+                respuesta.setMensaje("Unidad asignada correctamente al conductor.");
             } else {
-                r.setMensaje("No se pudo asignar la unidad.");
+                respuesta.setMensaje("No se pudo asignar la unidad.");
             }
 
         } catch (Exception e) {
-            r.setMensaje("Error al asignar unidad: " + e.getMessage());
+            respuesta.setMensaje("Error al asignar unidad: " + e.getMessage());
         }
 
-        return r;
+        return respuesta;
     }
-
-
+        
 }
