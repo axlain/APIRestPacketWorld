@@ -15,10 +15,10 @@ public class Constantes {
     public static final String MSJ_ERROR_DEPENDENCIAS = "No se puede dar de baja la";
     public static final String MSJ_ERROR_DEPENDENCIAS_MOTIVO = " porque tiene dependencias activas.";
 
-    public static final String SUCURSAL = "sucursal";
-    public static final String UNIDAD = "unidad";
-    public static final String CONDUCTOR = "conductor";
-    public static final String COLABORADOR = "colaborador";
+    public static final String SUCURSAL = " sucursal";
+    public static final String UNIDAD = " unidad";
+    public static final String CONDUCTOR = " conductor";
+    public static final String COLABORADOR = " colaborador";
 
     public static final String FORMATO_DOS_DIGITOS = "%02d";
     public static final String PREFIJO_SUCURSAL = "SUC";

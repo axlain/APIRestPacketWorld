@@ -53,7 +53,7 @@ public class SucursalImp {
 
                 if (filas > 0) {
                     respuesta.setError(false);
-                    respuesta.setMensaje(Constantes.MSJ_EXITO_REGISTRO + Constantes.SUCURSAL +
+                    respuesta.setMensaje(Constantes.MSJ_EXITO_REGISTRO +  Constantes.SUCURSAL +
                             " con código: " + codigoGenerado);
                 } else {
                     respuesta.setMensaje(Constantes.MSJ_ERROR_REGISTRO + Constantes.SUCURSAL);
@@ -79,7 +79,7 @@ public class SucursalImp {
         if (conexionBD != null) {
             try {
                 if (esSucursalInactiva(conexionBD, sucursal.getIdSucursal())) {
-                    respuesta.setMensaje(Constantes.MSJ_ERROR_INACTIVA + Constantes.SUCURSAL);
+                    respuesta.setMensaje(Constantes.MSJ_ERROR_INACTIVA + " " +Constantes.SUCURSAL + " inactiva");
                     return respuesta;
                 }
                 

@@ -84,7 +84,7 @@ public class UnidadImp {
         if (conexionBD != null) {
             try {
                 if (!esUnidadActiva(conexionBD, unidad.getIdUnidad())) {
-                    respuesta.setMensaje(Constantes.MSJ_ERROR_INACTIVA + Constantes.UNIDAD + " inactiva");
+                    respuesta.setMensaje(Constantes.MSJ_ERROR_INACTIVA + " "+Constantes.UNIDAD + " inactiva");
                     conexionBD.close();
                     return respuesta;
                 }

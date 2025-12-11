@@ -8,11 +8,12 @@ public class Colonia {
     private Integer idMunicipio;
     private Integer codigoMunicipio;
     private String codigoPostal;
-
+    private Double  latitud;
+    private Double  longitud ;
     public Colonia() {
     }
 
-    public Colonia(Integer idColonia, String nombre, String ubicacion, String asentamiento, Integer idMunicipio, Integer codigoMunicipio, String codigoPostal) {
+    public Colonia(Integer idColonia, String nombre, String ubicacion, String asentamiento, Integer idMunicipio, Integer codigoMunicipio, String codigoPostal, Double latitud, Double longitud) {
         this.idColonia = idColonia;
         this.nombre = nombre;
         this.ubicacion = ubicacion;
@@ -20,8 +21,11 @@ public class Colonia {
         this.idMunicipio = idMunicipio;
         this.codigoMunicipio = codigoMunicipio;
         this.codigoPostal = codigoPostal;
+        this.latitud = latitud;
+        this.longitud = longitud;
     }
 
+    
     public Integer getIdColonia() {
         return idColonia;
     }
@@ -58,6 +62,14 @@ public class Colonia {
         return idMunicipio;
     }
 
+    public Double getLatitud() {
+        return latitud;
+    }
+
+    public Double getLongitud() {
+        return longitud;
+    }
+
     public void setIdMunicipio(Integer idMunicipio) {
         this.idMunicipio = idMunicipio;
     }
@@ -77,6 +89,13 @@ public class Colonia {
     public void setCodigoPostal(String codigoPostal) {
         this.codigoPostal = codigoPostal;
     }
-    
-    
+
+    public void setLatitud(Double latitud) {
+        this.latitud = latitud;
+    }
+
+    public void setLongitud(Double longitud) {
+        this.longitud = longitud;
+    }
+
 }
