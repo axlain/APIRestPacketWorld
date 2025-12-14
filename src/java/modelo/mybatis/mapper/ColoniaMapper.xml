@@ -5,11 +5,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 <mapper namespace="colonia">
 
-    <select id="obtenerCoordenadasPorCP" parameterType="string" resultType="pojo.Colonia">
+    <select id="obtener-coordenadas-por-cp" parameterType="string" resultType="pojo.Colonia">
         SELECT * FROM colonia WHERE codigo_postal = #{codigoPostal}
     </select>
 
-    <update id="actualizarCoordenadas" parameterType="pojo.Colonia">
+    <update id="actualizar-coordenadas" parameterType="pojo.Colonia">
         UPDATE colonia
         SET latitud = #{latitud}, longitud = #{longitud}
         WHERE codigo_postal = #{codigoPostal}

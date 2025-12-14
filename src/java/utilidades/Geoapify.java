@@ -14,9 +14,6 @@ public class Geoapify {
 
     public static double[] obtenerLatLon(String cp) throws Exception {
         
-        // --- CAMBIO CLAVE AQUÍ ---
-        // En lugar de usar "?text=", usamos "?postcode=" y "&country="
-        // Esto fuerza a la API a buscar exactamente el CP, sin adivinar.
         String urlString = "https://api.geoapify.com/v1/geocode/search?postcode=" 
                            + cp.trim() + "&country=Mexico&apiKey=" + API_KEY;
 
@@ -42,7 +39,7 @@ public class Geoapify {
         
         JsonArray features = json.getAsJsonArray("features");
         
-        // Si esto sigue saliendo 0, es que de verdad el CP no existe en Geoapify
+        // Si es 0, el CP no existe en Geoapify
         if (features.size() == 0) {
             throw new Exception("El CP " + cp + " no existe en los mapas de Geoapify.");
         }

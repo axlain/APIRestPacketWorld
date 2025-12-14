@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="paquete">
+
+    <select id="consultar-por-envio" parameterType="int" resultType="pojo.Paquete">
+        SELECT
+            p.id_paquete AS idPaquete,
+            p.descripcion AS descripcion,
+            p.peso AS peso,
+            p.alto AS alto,
+            p.ancho AS ancho,
+            p.profundidad AS profundidad,
+            p.id_envio AS idEnvio
+        FROM paquete AS p
+        WHERE p.id_envio = #{idEnvio};
+    </select>
+    
+    <insert id="registrar" parameterType="pojo.Paquete">
+        INSERT INTO paquete (
+            descripcion,
+            peso,
+            alto,
+            ancho,
+            profundidad,
+            id_envio
+        ) VALUES (
+            #{descripcion},
+            #{peso},
+            #{alto},
+            #{ancho},
+            #{profundidad},
+            #{idEnvio}
+        );
+    </insert>
+
+    <update id="actualizar" parameterType="pojo.Paquete">
+        UPDATE paquete
+        SET
+            descripcion = #{descripcion},
+            peso = #{peso},
+            alto = #{alto},
+            ancho = #{ancho},
+            profundidad = #{profundidad}
+        WHERE id_paquete = #{idPaquete};
+    </update>
+
+    <delete id="eliminar" parameterType="int">
+        DELETE FROM paquete
+        WHERE id_paquete = #{idPaquete};
+    </delete>
+    
+    <select id="verificar-existe" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM paquete
+        WHERE id_paquete = #{idPaquete};
+    </select>
+    
+    <select id="obtener-id-envio" parameterType="int" resultType="int">
+        SELECT id_envio
+        FROM paquete
+        WHERE id_paquete = #{idPaquete};
+    </select>
+
+</mapper>

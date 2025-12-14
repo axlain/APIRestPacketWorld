@@ -213,6 +213,8 @@ SELECT * FROM estatus_unidad;
 
 SELECT * FROM envio;
 
+SELECT * FROM paquete;
+
 SELECT * FROM estatus_envio;
 
 SELECT * FROM rastreo_envio;
@@ -254,6 +256,9 @@ INNER JOIN municipio m ON c.codigo_municipio = m.codigo
 INNER JOIN estado e ON m.id_estado = e.id_estado
 INNER JOIN pais p ON e.id_pais = p.id_pais
 WHERE c.codigo_postal = '91193';
+
+DESCRIBE paquete;
+DESCRIBE envio;
 
 
 DROP DATABASE packetworld;

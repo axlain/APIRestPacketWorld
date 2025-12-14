@@ -14,6 +14,8 @@ public class Constantes {
     public static final String MSJ_ERROR_INACTIVA = "No se puede editar una";
     public static final String MSJ_ERROR_DEPENDENCIAS = "No se puede dar de baja la";
     public static final String MSJ_ERROR_DEPENDENCIAS_MOTIVO = " porque tiene dependencias activas.";
+    public static final String MSJ_ERROR_PAQUETES = "Error al registrar el paquete: ";
+    public static final String MSJ_ERROR_COSTO = "Error al actualizar el costo del envío.";
 
     public static final String SUCURSAL = " sucursal";
     public static final String UNIDAD = " unidad";
@@ -26,5 +28,9 @@ public class Constantes {
     public static final int ESTATUS_ACTIVO = 1;
     public static final int ESTATUS_INACTIVO = 2;
     public static final int ROL_CONDUCTOR = 3;
+    
+    public static final double COSTO_POR_KG = 25.0;
+    public static final double COSTO_POR_CM3 = 0.0002;
+    public static final double COSTO_POR_KM = 8.0;
 
 }

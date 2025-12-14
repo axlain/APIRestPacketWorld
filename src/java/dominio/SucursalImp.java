@@ -9,7 +9,7 @@ import utilidades.Constantes;
 
 public class SucursalImp {
 
-    public static List<Sucursal> obtenerSucursal() {
+    public static List<Sucursal> obtenerSucursales() {
         SqlSession conexionBD = MyBatisUtil.getSession();
         List<Sucursal> sucursales = null;
 

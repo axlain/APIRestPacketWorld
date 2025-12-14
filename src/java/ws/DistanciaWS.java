@@ -1,39 +1,32 @@
 package ws;
 
 import dominio.ColoniaImp;
-import dto.RSDistancia;
-import javax.ws.rs.*;
+import dto.Respuesta;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
-@Path("/distancia")
+@Path("distancia")
 public class DistanciaWS {
 
-    @POST
-    @Path("/calcular")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @GET
+    @Path("calcular")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response calcularDistancia(
-        @FormParam("cp1") String cp1,
-        @FormParam("cp2") String cp2) {
-
-        // Validación básica de entrada
-        if (cp1 == null || cp2 == null || cp1.isEmpty() || cp2.isEmpty()) {
-             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\": \"Los códigos postales son obligatorios\"}").build();
-        }
+    public Respuesta calcular(@QueryParam("cpOrigen") String cpOrigen, @QueryParam("cpDestino") String cpDestino) {
 
         try {
-            double distancia = ColoniaImp.calcularDistancia(cp1, cp2);
-            RSDistancia respuesta = new RSDistancia(cp1, cp2, distancia);
-            return Response.ok(respuesta, MediaType.APPLICATION_JSON).build();
+            double distancia = ColoniaImp.calcularDistancia(cpOrigen, cpDestino);
+
+            Respuesta respuesta = new Respuesta();
+            respuesta.setError(false);
+            respuesta.setMensaje("Distancia calculada correctamente. La distancia es: " + distancia + " km");
+            return respuesta;
 
         } catch (Exception e) {
-            e.printStackTrace(); // Ver esto en la consola del servidor (Netbeans/IntelliJ)
-            // Usar un valor por defecto si el mensaje es null
-            String msg = e.getMessage() != null ? e.getMessage() : "Error interno desconocido (Null Pointer)";
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\": \"" + msg + "\"}").build();
+            throw new BadRequestException(e.getMessage());
         }
     }
 }

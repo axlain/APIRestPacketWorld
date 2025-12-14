@@ -21,7 +21,7 @@ public class SucursalWS {
     @GET 
     @Produces (MediaType.APPLICATION_JSON)
     public List<Sucursal> obtenerSucursales(){
-        return SucursalImp.obtenerSucursal();
+        return SucursalImp.obtenerSucursales();
     }
     
     @Path("registrar")
