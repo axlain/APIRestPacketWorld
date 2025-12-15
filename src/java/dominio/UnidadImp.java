@@ -172,6 +172,22 @@ public class UnidadImp {
 
         return respuesta;
     }
+    
+    public static List<Unidad> buscarUnidad(String filtro) {
+        SqlSession conexionBD = MyBatisUtil.getSession();
+        List<Unidad> lista = null;
+
+        if (conexionBD != null) {
+            try {
+                lista = conexionBD.selectList("unidad.buscar-unidad",filtro);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            conexionBD.close();
+        }
+
+        return lista;
+    }
 
     // Métodos auxiliares
     private static String generarNumeroInterno(int anio, String vin) {

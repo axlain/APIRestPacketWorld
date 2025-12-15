@@ -319,45 +319,13 @@ public class ColaboradorImp {
         return respuesta;
     }
     
-    public static List<Colaborador> buscarPorNombre(String nombre) {
+    public static List<Colaborador> buscarColaborador(String filtro) {
         SqlSession conexionBD = MyBatisUtil.getSession();
         List<Colaborador> lista = null;
 
         if (conexionBD != null) {
             try {
-                lista = conexionBD.selectList("colaborador.buscar-por-nombre", nombre);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            conexionBD.close();
-        }
-
-        return lista;
-    }
-    
-    public static List<Colaborador> buscarPorNumeroPersonal(String numeroPersonal) {
-        SqlSession conexionBD = MyBatisUtil.getSession();
-        List<Colaborador> lista = null;
-
-        if (conexionBD != null) {
-            try {
-                lista = conexionBD.selectList("colaborador.buscar-por-numero-personal", numeroPersonal);
-            } catch (Exception e) {
-                e.printStackTrace();
-            } 
-            conexionBD.close();
-        }
-
-        return lista;
-    }
-    
-    public static List<Colaborador> buscarPorRol(String rol) {
-        SqlSession conexionBD = MyBatisUtil.getSession();
-        List<Colaborador> lista = null;
-
-        if (conexionBD != null) {
-            try {
-                lista = conexionBD.selectList("colaborador.buscar-por-rol", rol);
+                lista = conexionBD.selectList("colaborador.buscar-colaborador",filtro);
             } catch (Exception e) {
                 e.printStackTrace();
             } 

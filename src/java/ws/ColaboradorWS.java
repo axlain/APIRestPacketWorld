@@ -86,39 +86,16 @@ public class ColaboradorWS {
     @PUT
     @Path("{idColaborador}/desasignar-unidad")
     @Produces(MediaType.APPLICATION_JSON)
-    public Respuesta desasignarUnidad(
-            @PathParam("idColaborador") int idColaborador) {
+    public Respuesta desasignarUnidad(@PathParam("idColaborador") int idColaborador) {
         return ColaboradorImp.asignarUnidad(idColaborador, null);
     }
     
-    @Path("buscar-por-nombre")
+    @Path("buscar")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Colaborador> buscarPorNombre(@QueryParam("nombre") String nombre) {
+    public List<Colaborador> buscarColaborador(@QueryParam("filtro") String filtro) {
         try {
-            return ColaboradorImp.buscarPorNombre(nombre);
-        } catch (Exception e) {
-            throw new BadRequestException(e.getMessage());
-        }
-    }
-    
-   @Path("buscar-por-numero-personal")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<Colaborador> buscarPorNumeroPersonal(@QueryParam("numeroPersonal") String numeroPersonal) {
-        try {
-            return ColaboradorImp.buscarPorNumeroPersonal(numeroPersonal);
-        } catch (Exception e) {
-            throw new BadRequestException(e.getMessage());
-        }
-    }
-    
-    @Path("buscar-por-rol")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<Colaborador> buscarPorRol(@QueryParam("rol") String rol) {
-        try {
-            return ColaboradorImp.buscarPorRol(rol);
+            return ColaboradorImp.buscarColaborador(filtro);
         } catch (Exception e) {
             throw new BadRequestException(e.getMessage());
         }

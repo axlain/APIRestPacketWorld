@@ -150,7 +150,7 @@
         ORDER BY c.nombre ASC;
     </select>
     
-    <select id="buscar-por-nombre" parameterType="string" resultType="pojo.Colaborador">
+    <select id="buscar-colaborador" parameterType="string" resultType="pojo.Colaborador">
         SELECT 
             c.id_colaborador AS idColaborador,
             c.numero_personal AS numeroPersonal,
@@ -168,52 +168,12 @@
         FROM colaborador c
         INNER JOIN rol r ON c.id_rol = r.id_rol
         INNER JOIN sucursal s ON c.id_sucursal = s.id_sucursal
-        WHERE 
-            c.nombre = #{nombre}
-            OR c.apellido_paterno = #{nombre}
-            OR c.apellido_materno = #{nombre};
-    </select>
-    
-    <select id="buscar-por-numero-personal" parameterType="string" resultType="pojo.Colaborador">
-        SELECT 
-            c.id_colaborador AS idColaborador,
-            c.numero_personal AS numeroPersonal,
-            c.curp AS curp,
-            c.nombre AS nombre,
-            c.apellido_paterno AS apellidoPaterno,
-            c.apellido_materno AS apellidoMaterno,
-            c.correo AS correo,
-            c.id_rol AS idRol,
-            r.nombre AS rol,
-            c.id_sucursal AS idSucursal,
-            s.nombre_corto AS sucursal,
-            c.id_unidad AS idUnidad,
-            c.numero_licencia AS numeroLicencia
-        FROM colaborador c
-        INNER JOIN rol r ON c.id_rol = r.id_rol
-        INNER JOIN sucursal s ON c.id_sucursal = s.id_sucursal
-        WHERE c.numero_personal = #{numeroPersonal};
-    </select>
-
-    <select id="buscar-por-rol" parameterType="string" resultType="pojo.Colaborador">
-        SELECT 
-            c.id_colaborador AS idColaborador,
-            c.numero_personal AS numeroPersonal,
-            c.curp AS curp,
-            c.nombre AS nombre,
-            c.apellido_paterno AS apellidoPaterno,
-            c.apellido_materno AS apellidoMaterno,
-            c.correo AS correo,
-            c.id_rol AS idRol,
-            r.nombre AS rol,
-            c.id_sucursal AS idSucursal,
-            s.nombre_corto AS sucursal,
-            c.id_unidad AS idUnidad,
-            c.numero_licencia AS numeroLicencia
-        FROM colaborador c
-        INNER JOIN rol r ON c.id_rol = r.id_rol
-        INNER JOIN sucursal s ON c.id_sucursal = s.id_sucursal
-        WHERE r.nombre = #{rol};
+        WHERE
+            c.nombre LIKE CONCAT('%', #{filtro}, '%')
+            OR c.apellido_paterno LIKE CONCAT('%', #{filtro}, '%')
+            OR c.apellido_materno LIKE CONCAT('%', #{filtro}, '%')
+            OR c.numero_personal LIKE CONCAT('%', #{filtro}, '%')
+            OR r.nombre LIKE CONCAT('%', #{filtro}, '%')
     </select>
     
     <update id="guardar-foto" parameterType="pojo.Colaborador">

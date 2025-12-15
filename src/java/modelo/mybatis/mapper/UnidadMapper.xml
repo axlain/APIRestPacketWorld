@@ -79,7 +79,42 @@
           AND id_estatus_unidad = 1;
     </update>
 
+    <select id="buscar-unidad" parameterType="string" resultType="pojo.Unidad">
+        SELECT 
+           u.id_unidad AS idUnidad,
+           u.marca AS marca,
+           u.modelo AS modelo,
+           u.anio AS anio,
+           u.vin AS vin,
+           u.numero_interno AS numeroInterno,
+           u.motivo_baja AS motivoBaja,
 
-    
+           u.id_tipo_unidad AS idTipoUnidad,
+           tu.nombre AS tipoUnidad,
+
+           u.id_sucursal AS idSucursal,
+           s.codigo AS codigoSucursal,
+
+           u.id_estatus_unidad AS idEstatusUnidad,
+           eu.estatus AS estatusUnidad,
+
+           c.id_colaborador AS idConductor,
+           c.numero_personal AS numeroPersonalConductor
+
+        FROM unidad AS u 
+        INNER JOIN tipo_unidad AS tu ON u.id_tipo_unidad = tu.id_tipo_unidad 
+        LEFT JOIN sucursal AS s ON u.id_sucursal = s.id_sucursal 
+        INNER JOIN estatus_unidad AS eu ON u.id_estatus_unidad = eu.id_estatus_unidad 
+        LEFT JOIN colaborador AS c 
+            ON c.id_unidad = u.id_unidad 
+            AND c.id_rol = 3  
+
+        WHERE 
+            u.vin LIKE CONCAT('%', #{filtro}, '%')
+            OR u.marca LIKE CONCAT('%', #{filtro}, '%')
+            OR u.numero_interno LIKE CONCAT('%', #{filtro}, '%')
+
+        ORDER BY u.id_unidad;
+    </select>
 
 </mapper>
