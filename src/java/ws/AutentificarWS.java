@@ -26,4 +26,18 @@ public class AutentificarWS {
         
         throw new BadRequestException(); 
     }
+    
+    @POST
+    @Path("conductor")
+    @Produces(MediaType.APPLICATION_JSON)
+    public RSAutentificarAdmin autenticarConductor(
+        @FormParam("numero_personal")String numero_personal, 
+        @FormParam("contrasena")String contrasena){
+        if ((numero_personal != null && !numero_personal.isEmpty()) 
+                && (contrasena != null && !contrasena.isEmpty())) {
+            return AutentificarImp.autentificarConductor(numero_personal, contrasena); 
+        }
+        
+        throw new BadRequestException(); 
+    }
 }

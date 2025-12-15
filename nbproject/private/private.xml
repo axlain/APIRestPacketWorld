@@ -12,13 +12,19 @@
             <file>file:/C:/Proyecto%20Integracion/APIRestPacketWorld/src/java/dominio/EnvioImp.java</file>
             <file>file:/C:/Proyecto%20Integracion/APIRestPacketWorld/src/java/utilidades/Constantes.java</file>
             <file>file:/C:/Proyecto%20Integracion/APIRestPacketWorld/src/java/modelo/mybatis/mapper/PaqueteMapper.xml</file>
+            <file>file:/C:/Proyecto%20Integracion/APIRestPacketWorld/src/java/dominio/AutentificarImp.java</file>
             <file>file:/C:/Proyecto%20Integracion/APIRestPacketWorld/src/java/ws/ClienteWS.java</file>
+            <file>file:/C:/Proyecto%20Integracion/APIRestPacketWorld/src/java/modelo/mybatis/mapper/AutentificarMapper.xml</file>
+            <file>file:/C:/Proyecto%20Integracion/APIRestPacketWorld/src/java/dominio/CatalogoImp.java</file>
             <file>file:/C:/Proyecto%20Integracion/APIRestPacketWorld/src/java/modelo/mybatis/mapper/EnvioMapper.xml</file>
+            <file>file:/C:/Proyecto%20Integracion/APIRestPacketWorld/src/java/pojo/Colaborador.java</file>
+            <file>file:/C:/Proyecto%20Integracion/APIRestPacketWorld/src/java/ws/AutentificarWS.java</file>
             <file>file:/C:/Proyecto%20Integracion/APIRestPacketWorld/src/java/dominio/UnidadImp.java</file>
             <file>file:/C:/Proyecto%20Integracion/APIRestPacketWorld/src/java/dominio/ColaboradorImp.java</file>
             <file>file:/C:/Proyecto%20Integracion/APIRestPacketWorld/src/java/dominio/PaqueteImp.java</file>
             <file>file:/C:/Proyecto%20Integracion/APIRestPacketWorld/src/java/modelo/mybatis/mapper/UnidadMapper.xml</file>
             <file>file:/C:/Proyecto%20Integracion/APIRestPacketWorld/src/java/ws/ColaboradorWS.java</file>
+            <file>file:/C:/Proyecto%20Integracion/APIRestPacketWorld/src/java/dto/RSAutentificarAdmin.java</file>
         </group>
     </open-files>
 </project-private>
