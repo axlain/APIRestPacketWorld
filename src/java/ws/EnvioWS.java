@@ -61,7 +61,7 @@ public class EnvioWS {
         }
     }
 
-    @PUT
+    /*@PUT
     @Path("estatus")
     @Produces(MediaType.APPLICATION_JSON)
     public Respuesta actualizarEstatusEnvio(
@@ -72,5 +72,5 @@ public class EnvioWS {
         } catch (Exception e) {
             throw new BadRequestException(e.getMessage());
         }
-    }
+    }*/
 }

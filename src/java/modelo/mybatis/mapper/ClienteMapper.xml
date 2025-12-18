@@ -22,7 +22,8 @@
             c.id_municipio AS idMunicipio,
             m.nombre AS municipio,
             c.id_colonia AS idColonia,
-            co.nombre AS colonia
+            co.nombre AS colonia,
+            co.codigo_postal    AS codigoPostal 
         FROM cliente AS c
         LEFT JOIN pais AS p ON c.id_pais = p.id_pais
         LEFT JOIN estado AS e ON c.id_estado = e.id_estado
@@ -115,7 +116,8 @@
             c.id_municipio AS idMunicipio,
             m.nombre AS municipio,
             c.id_colonia AS idColonia,
-            co.nombre AS colonia
+            co.nombre AS colonia, 
+            co.codigo_postal    AS codigoPostal 
         FROM cliente AS c
         LEFT JOIN pais AS p ON c.id_pais = p.id_pais
         LEFT JOIN estado AS e ON c.id_estado = e.id_estado
@@ -128,6 +130,12 @@
             OR c.telefono LIKE CONCAT('%', #{filtro}, '%')
             OR c.correo LIKE CONCAT('%', #{filtro}, '%')
         ORDER BY c.id_cliente;
+    
+    </select>
+        <select id="tiene-dependencias" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM envio
+        WHERE id_cliente = #{idCliente};
     </select>
 
 </mapper>

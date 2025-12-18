@@ -18,11 +18,12 @@ public class Cliente {
     private String municipio;
     private Integer idColonia;
     private String colonia;
-
+    private String codigoPostal;
+    
     public Cliente() {
     }
 
-    public Cliente(Integer idCliente, String nombre, String apellidoPaterno, String apellidoMaterno, String calle, String numero, String telefono, String correo, Integer idPais, String pais, Integer idEstado, String estado, Integer idMunicipio, String municipio, Integer idColonia, String colonia) {
+    public Cliente(Integer idCliente, String nombre, String apellidoPaterno, String apellidoMaterno, String calle, String numero, String telefono, String correo, Integer idPais, String pais, Integer idEstado, String estado, Integer idMunicipio, String municipio, Integer idColonia, String colonia, String codigoPostal) {
         this.idCliente = idCliente;
         this.nombre = nombre;
         this.apellidoPaterno = apellidoPaterno;
@@ -39,7 +40,9 @@ public class Cliente {
         this.municipio = municipio;
         this.idColonia = idColonia;
         this.colonia = colonia;
+        this.codigoPostal = codigoPostal;
     }
+
 
     public Integer getIdCliente() {
         return idCliente;
@@ -105,6 +108,10 @@ public class Cliente {
         return colonia;
     }
 
+    public String getCodigoPostal() {
+        return codigoPostal;
+    }
+
     public void setIdCliente(Integer idCliente) {
         this.idCliente = idCliente;
     }
@@ -167,6 +174,10 @@ public class Cliente {
 
     public void setColonia(String colonia) {
         this.colonia = colonia;
+    }
+
+    public void setCodigoPostal(String codigoPostal) {
+        this.codigoPostal = codigoPostal;
     }
     
     

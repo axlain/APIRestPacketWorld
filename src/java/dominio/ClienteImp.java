@@ -122,33 +122,53 @@ public class ClienteImp {
 
         if (conexion != null) {
             try {
-
-                Integer existe = conexion.selectOne("cliente.verificar-existe", idCliente);
+                Integer existe = conexion.selectOne(
+                        "cliente.verificar-existe",
+                        idCliente
+                );
                 if (existe == null || existe == 0) {
                     respuesta.setMensaje("El cliente no existe.");
                     return respuesta;
                 }
+                Integer dependencias = conexion.selectOne(
+                        "cliente.tiene-dependencias",
+                        idCliente
+                );
 
+                if (dependencias != null && dependencias > 0) {
+                    respuesta.setMensaje(
+                            "No es posible eliminar el cliente porque tiene envíos registrados."
+                    );
+                    return respuesta;
+                }
                 int filas = conexion.delete("cliente.eliminar", idCliente);
                 conexion.commit();
 
                 if (filas > 0) {
                     respuesta.setError(false);
-                    respuesta.setMensaje(Constantes.MSJ_EXITO_BAJA + " el cliente.");
+                    respuesta.setMensaje(
+                            Constantes.MSJ_EXITO_BAJA + " el cliente."
+                    );
                 } else {
-                    respuesta.setMensaje(Constantes.MSJ_ERROR_BAJA + " el cliente.");
+                    respuesta.setMensaje(
+                            Constantes.MSJ_ERROR_BAJA + " el cliente."
+                    );
                 }
 
             } catch (Exception e) {
-                respuesta.setMensaje("Error al eliminar cliente: " + e.getMessage());
+                respuesta.setMensaje(
+                        "Error al eliminar cliente: " + e.getMessage()
+                );
+            } finally {
+                conexion.close();
             }
-            conexion.close();
         } else {
             respuesta.setMensaje(Constantes.MSJ_ERROR_BD);
         }
 
         return respuesta;
     }
+
     
     public static List<Cliente> buscarCliente(String filtro) {
         SqlSession conexionBD = MyBatisUtil.getSession();
