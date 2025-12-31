@@ -26,15 +26,23 @@
            c.numero_personal AS numeroPersonalConductor
 
         FROM unidad AS u 
-        INNER JOIN tipo_unidad AS tu ON u.id_tipo_unidad = tu.id_tipo_unidad 
-        LEFT JOIN sucursal AS s ON u.id_sucursal = s.id_sucursal 
-        INNER JOIN estatus_unidad AS eu ON u.id_estatus_unidad = eu.id_estatus_unidad 
+        INNER JOIN tipo_unidad AS tu 
+            ON u.id_tipo_unidad = tu.id_tipo_unidad 
 
-        LEFT JOIN colaborador AS c ON c.id_unidad = u.id_unidad 
-        AND c.id_rol = 3  
+        LEFT JOIN sucursal AS s 
+            ON u.id_sucursal = s.id_sucursal 
 
+        INNER JOIN estatus_unidad AS eu 
+            ON u.id_estatus_unidad = eu.id_estatus_unidad 
+
+        LEFT JOIN colaborador AS c 
+            ON c.id_unidad = u.id_unidad 
+            AND c.id_rol = 3  
+
+        WHERE u.id_estatus_unidad = 1
         ORDER BY u.id_unidad;
     </select>
+
     
     <select id="verificar-sucursal-activa" parameterType="pojo.Sucursal" resultType="int">
         SELECT COUNT(*)   

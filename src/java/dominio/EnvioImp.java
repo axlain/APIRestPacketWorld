@@ -9,6 +9,7 @@ import org.apache.ibatis.session.SqlSession;
 import pojo.Envio;
 import pojo.Paquete;
 import utilidades.Constantes;
+import utilidades.Distancia;
 
 public class EnvioImp {
     public static List<Envio> obtenerEnvios() {
@@ -125,6 +126,17 @@ public class EnvioImp {
                     respuesta.setMensaje("El colaborador asignado no es un conductor.");
                     return respuesta;
                 }
+
+                // VALIDACIÓN NUEVA: evitar conductor repetido con envío activo (1-4)
+                Integer tieneEnvioActivo = conexionBD.selectOne(
+                        "envio.conductor-tiene-envio-activo",
+                        envio.getIdConductor()
+                );
+
+                if (tieneEnvioActivo != null && tieneEnvioActivo > 0) {
+                    respuesta.setMensaje("No se puede asignar el conductor: ya tiene un envío activo.");
+                    return respuesta;
+                }
             }
 
             // Generar guía
@@ -133,7 +145,7 @@ public class EnvioImp {
             // Estatus inicial
             envio.setIdEstatusActual(1);
 
-            // 🔑 Costo inicial en 0 (se calcula después con paquetes)
+            // Costo inicial en 0 (se calcula después con paquetes)
             envio.setCostoTotal(0);
 
             int filas = conexionBD.insert("envio.registrar", envio);
@@ -149,6 +161,7 @@ public class EnvioImp {
             }
 
         } catch (Exception e) {
+            conexionBD.rollback();
             respuesta.setMensaje("Error al registrar el envío: " + e.getMessage());
             e.printStackTrace();
         } finally {
@@ -158,9 +171,8 @@ public class EnvioImp {
         return respuesta;
     }
 
-    // =========================
+
     // ACTUALIZAR ENVÍO
-    // =========================
     public static Respuesta actualizarEnvio(Envio envio) {
         Respuesta respuesta = new Respuesta();
         respuesta.setError(true);
@@ -220,24 +232,13 @@ public class EnvioImp {
         }
 
         try {
-            List<Paquete> paquetes = conexionBD.selectList(
-                    "paquete.consultar-por-envio",
-                    idEnvio
-            );
+            List<Paquete> paquetes = conexionBD.selectList("paquete.consultar-por-envio", idEnvio);
 
             if (paquetes == null || paquetes.isEmpty()) {
-                throw new RuntimeException(
-                        "No se puede calcular el costo: el envío no tiene paquetes."
-                );
+                throw new RuntimeException("No se puede calcular el costo: el envío no tiene paquetes.");
             }
 
-            double pesoTotal = 0;
-            double volumenTotal = 0;
-
-            for (Paquete p : paquetes) {
-                pesoTotal += p.getPeso();
-                volumenTotal += p.getAlto() * p.getAncho() * p.getProfundidad();
-            }
+            int numPaquetes = paquetes.size();
 
             String cpOrigen = conexionBD.selectOne("envio.obtener-cp-origen", idEnvio);
             String cpDestino = conexionBD.selectOne("envio.obtener-cp-destino", idEnvio);
@@ -246,17 +247,19 @@ public class EnvioImp {
                 throw new RuntimeException("No se pudo obtener el código postal del envío.");
             }
 
-            double distanciaKm = ColoniaImp.calcularDistancia(cpOrigen, cpDestino);
+            double distanciaKm = Distancia.obtenerDistancia(cpOrigen, cpDestino);
+            double costoPorKm = obtenerCostoPorKilometro(distanciaKm);
+            double costoAdicional = obtenerCostoAdicionalPorPaquetes(numPaquetes);
 
-            return (pesoTotal * Constantes.COSTO_POR_KG)
-                    + (volumenTotal * Constantes.COSTO_POR_CM3)
-                    + (distanciaKm * Constantes.COSTO_POR_KM);
+            return (distanciaKm * costoPorKm) + costoAdicional;
 
+        } catch (Exception e) {
+            throw new RuntimeException("Error al calcular el costo: " + e.getMessage());
         } finally {
             conexionBD.close();
         }
     }
-
+    
     public static void actualizarCostoEnvio(int idEnvio) {
 
         SqlSession conexionBD = MyBatisUtil.getSession();
@@ -289,5 +292,89 @@ public class EnvioImp {
 
         return "PW-" + fecha + "-" + random;
     }
+    private static int obtenerRangoDistancia(double km) {
+        if (km <= 200) {
+            return 1;
+        }
+        if (km <= 500) {
+            return 2;
+        }
+        if (km <= 1000) {
+            return 3;
+        }
+        if (km <= 2000) {
+            return 4;
+        }
+        return 5;
+    }
+    private static double obtenerCostoPorKilometro(double distanciaKm) {
+        int rango = obtenerRangoDistancia(distanciaKm);
+        double costo = 0.0;
+
+        switch (rango) {
+            case 1:
+                costo = 4.00;
+                break;
+            case 2:
+                costo = 3.00;
+                break;
+            case 3:
+                costo = 2.00;
+                break;
+            case 4:
+                costo = 1.00;
+                break;
+            case 5:
+                costo = 0.50;
+                break;
+            default:
+                costo = 0.00;
+        }
+
+        return costo;
+    }
+
+    private static int obtenerGrupoPaquetes(int numPaquetes) {
+        if (numPaquetes <= 0) {
+            return 0;
+        }
+        if (numPaquetes >= 5) {
+            return 5;
+        }
+        return numPaquetes;
+    }
     
+    private static double obtenerCostoAdicionalPorPaquetes(int numPaquetes) {
+        int grupo = obtenerGrupoPaquetes(numPaquetes);
+        double costo = 0.0;
+
+        switch (grupo) {
+            case 0:
+                costo = 0.00;
+                break;
+            case 1:
+                costo = 0.00;
+                break;
+            case 2:
+                costo = 50.00;
+                break;
+            case 3:
+                costo = 80.00;
+                break;
+            case 4:
+                costo = 110.00;
+                break;
+            case 5:
+                costo = 150.00;
+                break;
+            default:
+                costo = 0.00;
+                break;
+        }
+
+        return costo;
+    }
+
+
+
 }

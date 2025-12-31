@@ -3,7 +3,7 @@
 
 <mapper namespace = "sucursal" >
     
-    <select id="obtener-todos"  resultType = "pojo.Sucursal">
+    <select id="obtener-todos" resultType="pojo.Sucursal">
         SELECT 
             s.id_sucursal AS idSucursal,
             s.codigo AS codigo,
@@ -33,8 +33,11 @@
         LEFT JOIN municipio AS m ON s.id_municipio = m.id_municipio  
         LEFT JOIN colonia AS c ON s.id_colonia = c.id_colonia  
         LEFT JOIN estatus_sucursal AS es ON s.id_estatus_sucursal = es.id_estatus_sucursal  
-        ORDER BY s.id_sucursal; 
+
+        WHERE s.id_estatus_sucursal = 1
+        ORDER BY s.id_sucursal;
     </select>
+
     
     <select id="obtener-maximo-consecutivo" parameterType="int" resultType="int">
         SELECT 
