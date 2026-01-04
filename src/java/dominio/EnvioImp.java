@@ -7,6 +7,7 @@ import java.util.Map;
 import modelo.mybatis.MyBatisUtil;
 import org.apache.ibatis.session.SqlSession;
 import pojo.Envio;
+import pojo.HistorialEstatusEnvio;
 import pojo.Paquete;
 import utilidades.Constantes;
 import utilidades.Distancia;
@@ -149,14 +150,35 @@ public class EnvioImp {
             envio.setCostoTotal(0);
 
             int filas = conexionBD.insert("envio.registrar", envio);
-            conexionBD.commit();
 
             if (filas > 0) {
-                respuesta.setError(false);
-                respuesta.setMensaje(
+                conexionBD.commit();
+
+                HistorialEstatusEnvio historial = new HistorialEstatusEnvio();
+                historial.setIdEnvio(envio.getIdEnvio());
+                historial.setIdEstatus(envio.getIdEstatusActual());
+                historial.setIdColaborador(envio.getIdCreadoPor());
+                historial.setComentario("Registro inicial del envío");
+
+                // 3) Registrar historial usando HistorialEnvioImp (sesión aparte)
+                Respuesta respHistorial = HistorialEnvioImp.registrarHistorialEnvio(historial);
+
+                if (!respHistorial.isError()) {
+                    respuesta.setError(false);
+                    respuesta.setMensaje(
                         "Envío registrado correctamente. Número de guía: " + envio.getNumeroGuia()
-                );
+                    );
+                } else {
+                    // Envío ya está guardado, pero falló historial
+                    respuesta.setError(false);
+                    respuesta.setMensaje(
+                        "Envío registrado correctamente, pero NO se pudo registrar el historial. "
+                        + respHistorial.getMensaje()
+                    );
+                }
+
             } else {
+                conexionBD.rollback();
                 respuesta.setMensaje("No se pudo registrar el envío.");
             }
 
@@ -220,10 +242,139 @@ public class EnvioImp {
 
         return respuesta;
     }
+    
+    public static Respuesta actualizarEstatusEnvio(Envio envioReq) {
+        Respuesta respuesta = new Respuesta();
+        respuesta.setError(true);
 
-    // =========================
+        if (envioReq == null || envioReq.getNumeroGuia() == null || envioReq.getNumeroGuia().trim().isEmpty()) {
+            respuesta.setMensaje("La guía es obligatoria.");
+            return respuesta;
+        }
+        if (envioReq.getIdEstatusActual() == null) {
+            respuesta.setMensaje("El estatus es obligatorio.");
+            return respuesta;
+        }
+
+        // Usaremos idCreadoPor como "quien hizo el cambio" (porque Envio no tiene otro campo)
+        if (envioReq.getIdCreadoPor() == null) {
+            respuesta.setMensaje("El colaborador (idCreadoPor) es obligatorio.");
+            return respuesta;
+        }
+
+        String numeroGuia = envioReq.getNumeroGuia().trim();
+        int nuevoEstatus = envioReq.getIdEstatusActual();
+        int idColaborador = envioReq.getIdCreadoPor();
+
+        SqlSession conexionBD = MyBatisUtil.getSession();
+        if (conexionBD == null) {
+            respuesta.setMensaje(Constantes.MSJ_ERROR_BD);
+            return respuesta;
+        }
+
+        try {
+            Envio envioActual = conexionBD.selectOne("envio.consultar", numeroGuia);
+            if (envioActual == null) {
+                respuesta.setMensaje("No se encontró el envío con la guía proporcionada.");
+                return respuesta;
+            }
+
+            int estatusActual = envioActual.getIdEstatusActual();
+
+            // ===== Validaciones =====
+            if (estatusActual == 5) { respuesta.setMensaje("No se puede cambiar: envío entregado."); return respuesta; }
+            if (estatusActual == 6) { respuesta.setMensaje("No se puede cambiar: envío cancelado."); return respuesta; }
+
+            if (estatusActual == nuevoEstatus) {
+                respuesta.setMensaje("El envío ya tiene ese estatus.");
+                return respuesta;
+            }
+
+            if (!transicionPermitida(estatusActual, nuevoEstatus)) {
+                respuesta.setMensaje(Constantes.MSJ_TRANSICION_INVALIDA);
+                return respuesta;
+            }
+
+            if (nuevoEstatus == 3 && envioActual.getIdConductor() == null) {
+                respuesta.setMensaje("No se puede poner 'en tránsito' sin asignar un conductor.");
+                return respuesta;
+            }
+            // 1) Update en envio
+            java.util.Map<String, Object> params = new java.util.HashMap<>();
+            params.put("guia", numeroGuia);
+            params.put("estatus", nuevoEstatus);
+
+            int filas = conexionBD.update("envio.actualizar-estatus", params);
+            if (filas <= 0) {
+                conexionBD.rollback();
+                respuesta.setMensaje("No se pudo actualizar el estatus del envío.");
+                return respuesta;
+            }
+            conexionBD.commit();
+
+            // 2) Insert historial (comentario desde Constantes)
+            HistorialEstatusEnvio historial = new HistorialEstatusEnvio();
+            historial.setIdEnvio(envioActual.getIdEnvio());
+            historial.setIdEstatus(nuevoEstatus);
+            historial.setIdColaborador(idColaborador);
+            historial.setComentario(obtenerComentarioPorEstatus(nuevoEstatus));
+
+            Respuesta respHist = HistorialEnvioImp.registrarHistorialEnvio(historial);
+
+            respuesta.setError(false);
+            if (!respHist.isError()) {
+                respuesta.setMensaje("Estatus actualizado y registrado en historial correctamente.");
+            } else {
+                respuesta.setMensaje("Estatus actualizado, pero NO se pudo registrar el historial. " + respHist.getMensaje());
+            }
+
+        } catch (Exception e) {
+            conexionBD.rollback();
+            respuesta.setMensaje("Error al actualizar estatus: " + e.getMessage());
+        } finally {
+            conexionBD.close();
+        }
+
+        return respuesta;
+    }
+    
+    private static String obtenerComentarioPorEstatus(int idEstatus) {
+        switch (idEstatus) {
+            case 1: return Constantes.HIST_ENVIO_REGISTRO_INICIAL;
+            case 2: return Constantes.HIST_ENVIO_PROCESADO;
+            case 3: return Constantes.HIST_ENVIO_EN_TRANSITO;
+            case 4: return Constantes.HIST_ENVIO_DETENIDO;
+            case 5: return Constantes.HIST_ENVIO_ENTREGADO;
+            case 6: return Constantes.HIST_ENVIO_CANCELADO;
+            default: return "Cambio de estatus del envío";
+        }
+    }
+
+    private static boolean transicionPermitida(int estatusActual, int estatusNuevo) {
+        // Estados finales
+        if (estatusActual == 5 || estatusActual == 6) {
+            return false;
+        }
+        // Recibido en sucursal
+        if (estatusActual == 1) {
+            return estatusNuevo == 2 || estatusNuevo == 6;
+        }
+        // Procesado
+        if (estatusActual == 2) {
+            return estatusNuevo == 3 || estatusNuevo == 6;
+        }
+        // En tránsito
+        if (estatusActual == 3) {
+            return estatusNuevo == 4 || estatusNuevo == 5;
+        }
+        // Detenido
+        if (estatusActual == 4) {
+            return estatusNuevo == 3 || estatusNuevo == 6;
+        }
+        return false;
+    }
+
     // CÁLCULO DE COSTO
-    // =========================
     private static double calcularCostoEnvio(int idEnvio) {
 
         SqlSession conexionBD = MyBatisUtil.getSession();

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="historialEnvio">
+    <insert id="registrar"
+            parameterType="pojo.HistorialEstatusEnvio"
+            useGeneratedKeys="true"
+            keyProperty="idHistorial">
+
+        INSERT INTO historial_estatus_envio (
+            id_envio,
+            id_estatus,
+            id_colaborador,
+            fecha_cambio,
+            comentario
+        )
+        VALUES (
+            #{idEnvio},
+            #{idEstatus},
+            #{idColaborador},
+            NOW(),
+            #{comentario}
+        )
+    </insert>
+
+
+</mapper>

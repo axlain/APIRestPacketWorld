@@ -34,6 +34,7 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         <mapper resource="modelo/mybatis/mapper/CatalogoMapper.xml"/>
         <mapper resource="modelo/mybatis/mapper/DireccionMapper.xml"/>
         <mapper resource="modelo/mybatis/mapper/ColoniaMapper.xml"/>
+        <mapper resource="modelo/mybatis/mapper/HistorialEstatusEnvioMapper.xml"/>
 
     </mappers>
 

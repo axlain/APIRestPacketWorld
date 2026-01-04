@@ -29,8 +29,28 @@ public class Constantes {
     public static final int ESTATUS_INACTIVO = 2;
     public static final int ROL_CONDUCTOR = 3;
     
-    public static final double COSTO_POR_KG = 25.0;
+    /*public static final double COSTO_POR_KG = 25.0;
     public static final double COSTO_POR_CM3 = 0.0002;
-    public static final double COSTO_POR_KM = 8.0;
-
+    public static final double COSTO_POR_KM = 8.0;*/
+    
+    //Comentarios de historial de envío
+    public static final String HIST_ENVIO_REGISTRO_INICIAL =
+            "Registro inicial del envío";
+    public static final String HIST_ENVIO_PROCESADO =
+            "Envío procesado en sucursal";
+    public static final String HIST_ENVIO_EN_TRANSITO =
+            "Envío salió a ruta";
+    public static final String HIST_ENVIO_DETENIDO =
+            "Envío detenido por incidencia";
+    public static final String HIST_ENVIO_REANUDADO =
+            "Incidencia resuelta, envío reanudado";
+    public static final String HIST_ENVIO_ENTREGADO =
+            "Envío entregado al destinatario";
+    public static final String HIST_ENVIO_CANCELADO =
+            "Envío cancelado";
+    public static final String MSJ_TRANSICION_INVALIDA =
+            "Transición inválida de estatus del envío.";
+    
+    
+    
 }
