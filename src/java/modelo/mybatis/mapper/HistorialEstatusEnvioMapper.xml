@@ -23,5 +23,28 @@
         )
     </insert>
 
+    <select id="consultar-por-envio" parameterType="map" resultType="pojo.HistorialEstatusEnvio">
+       SELECT
+        h.id_historial      AS idHistorial,
 
+        h.id_envio          AS idEnvio,
+
+        h.id_estatus        AS idEstatus,
+        ee.nombre           AS nombreEstatus,
+
+        h.id_colaborador    AS idColaborador,
+        c.nombre            AS nombreColaborador,
+        c.apellido_paterno  AS apellidoPaternoColaborador,
+
+        h.fecha_cambio      AS fechaCambio,
+        h.comentario        AS comentario
+        FROM historial_estatus_envio h
+        JOIN estatus_envio ee
+            ON h.id_estatus = ee.id_estatus
+        LEFT JOIN colaborador c
+            ON h.id_colaborador = c.id_colaborador
+        WHERE h.id_envio = #{idEnvio}
+        ORDER BY h.fecha_cambio DESC;
+    </select>
+    
 </mapper>

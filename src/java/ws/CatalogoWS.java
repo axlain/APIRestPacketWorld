@@ -8,6 +8,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import pojo.Colonia;
 import pojo.Estado;
+import pojo.EstatusEnvio;
 import pojo.Municipio;
 import pojo.Pais;
 import pojo.Rol;
@@ -53,5 +54,12 @@ public class CatalogoWS {
     @Produces(MediaType.APPLICATION_JSON)
     public List<Colonia> obtenerColonias(){
         return CatalogoImp.obtenerColonia();
+    }
+    
+    @Path ("obtener-estatus-envio")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<EstatusEnvio> obtenerEstatusEnvio(){
+        return CatalogoImp.obtenerEstatusEnvio();
     }
 }

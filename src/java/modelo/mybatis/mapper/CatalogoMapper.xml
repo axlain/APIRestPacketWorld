@@ -50,7 +50,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ORDER BY m.nombre;
     </select>
     
-     <select id="obtener-colonias" resultType="pojo.Colonia">
+    <select id="obtener-colonias" resultType="pojo.Colonia">
         SELECT
             c.id_colonia        AS idColonia,
             c.nombre            AS nombre,
@@ -60,6 +60,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             c.codigo_postal     AS codigoPostal
         FROM colonia c
         ORDER BY c.nombre;
+    </select>
+    
+    <select id="obtener-estatus-envio" resultType="pojo.EstatusEnvio">
+        SELECT 
+            id_estatus AS idEstatus,
+            nombre 
+        FROM estatus_envio 
     </select>
 
 </mapper>
