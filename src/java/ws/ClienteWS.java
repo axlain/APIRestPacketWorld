@@ -27,6 +27,16 @@ public class ClienteWS {
          return ClienteImp.obtenerClientes();
     }
     
+    @GET
+    @Path("obtener-por-id/{idCliente}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Cliente obtenerClientePorId(@PathParam("idCliente") int idCliente) {
+        if (idCliente > 0) {
+            return ClienteImp.obtenerClientePorId(idCliente);
+        }
+        throw new BadRequestException();
+    }
+    
     @Path("registrar")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

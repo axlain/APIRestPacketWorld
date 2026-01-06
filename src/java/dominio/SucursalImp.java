@@ -23,6 +23,21 @@ public class SucursalImp {
         }
         return sucursales;
     }
+    
+    public static Sucursal obtenerSucursalPorId(int idSucursal) {
+        Sucursal sucursal = null;
+        SqlSession conexionBD = MyBatisUtil.getSession();
+
+        if (conexionBD != null) {
+            try {
+                sucursal = conexionBD.selectOne("sucursal.obtener-por-id",idSucursal);
+                conexionBD.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return sucursal;
+    }
 
     public static Respuesta registrarSucursal(Sucursal sucursal) {
         Respuesta respuesta = new Respuesta();

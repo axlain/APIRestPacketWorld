@@ -33,6 +33,37 @@
         
     </select>
     
+    <select id="obtener-por-id" parameterType="int" resultType="pojo.Cliente">
+        SELECT 
+            c.id_cliente AS idCliente,
+            c.nombre AS nombre,
+            c.apellido_paterno AS apellidoPaterno,
+            c.apellido_materno AS apellidoMaterno,
+            c.calle AS calle,
+            c.numero AS numero,
+            c.telefono AS telefono,
+            c.correo AS correo,
+
+            c.id_pais AS idPais,
+            p.nombre AS pais,
+
+            c.id_estado AS idEstado,
+            e.nombre AS estado,
+
+            c.id_municipio AS idMunicipio,
+            m.nombre AS municipio,
+
+            c.id_colonia AS idColonia,
+            co.nombre AS colonia,
+            co.codigo_postal AS codigoPostal
+
+        FROM cliente AS c
+        LEFT JOIN pais AS p ON c.id_pais = p.id_pais
+        LEFT JOIN estado AS e ON c.id_estado = e.id_estado
+        LEFT JOIN municipio AS m ON c.id_municipio = m.id_municipio
+        LEFT JOIN colonia AS co ON c.id_colonia = co.id_colonia
+        WHERE c.id_cliente = #{idCliente};
+    </select>
     
     <insert id="registrar" parameterType="pojo.Cliente">
         

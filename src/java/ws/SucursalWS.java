@@ -17,11 +17,22 @@ import pojo.Sucursal;
 
 @Path("sucursal")
 public class SucursalWS {
+    
     @Path ("obtener-todos")
     @GET 
     @Produces (MediaType.APPLICATION_JSON)
     public List<Sucursal> obtenerSucursales(){
         return SucursalImp.obtenerSucursales();
+    }
+    
+    @Path("obtener-por-id/{idSucursal}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Sucursal obtenerSucursalPorId(@PathParam("idSucursal") Integer idSucursal) {
+        if (idSucursal != null && idSucursal > 0) {
+            return SucursalImp.obtenerSucursalPorId(idSucursal);
+        }
+        throw new BadRequestException();
     }
     
     @Path("registrar")

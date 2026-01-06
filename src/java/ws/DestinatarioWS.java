@@ -25,6 +25,16 @@ public class DestinatarioWS {
     public List<Destinatario> obtenerDestinatarios() {
         return DestinatarioImp.obtenerDestinatarios();
     }
+    
+    @GET
+    @Path("obtener-por-id/{idDestinatario}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Destinatario obtenerPorId(@PathParam("idDestinatario") Integer idDestinatario) {
+        if (idDestinatario != null && idDestinatario > 0) {
+            return DestinatarioImp.obtenerDestinatarioPorId(idDestinatario);
+        }
+        throw new BadRequestException();
+    }
 
     @POST
     @Path("registrar")

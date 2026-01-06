@@ -23,6 +23,22 @@ public class DestinatarioImp {
         }
         return lista;
     }
+    
+    public static Destinatario obtenerDestinatarioPorId(int idDestinatario) {
+        SqlSession conexion = MyBatisUtil.getSession();
+        Destinatario destinatario = null;
+
+        if (conexion != null) {
+            try {
+                destinatario = conexion.selectOne("destinatario.obtener-por-id", idDestinatario);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            conexion.close();
+        }
+
+        return destinatario;
+    }
 
     public static Respuesta registrarDestinatario(Destinatario destinatario) {
         Respuesta respuesta = new Respuesta();

@@ -23,6 +23,21 @@ public class ClienteImp {
         }
         return clientes;
     }
+    
+    public static Cliente obtenerClientePorId(int idCliente) {
+        SqlSession conexionBD = MyBatisUtil.getSession();
+        Cliente cliente = null;
+
+        if (conexionBD != null) {
+            try {
+                cliente = conexionBD.selectOne("cliente.obtener-por-id",idCliente);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } 
+            conexionBD.close();
+        }
+        return cliente;
+    }
 
     public static Respuesta registrarCliente(Cliente cliente) {
         Respuesta respuesta = new Respuesta();

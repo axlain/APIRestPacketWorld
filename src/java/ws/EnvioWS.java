@@ -28,6 +28,16 @@ public class EnvioWS {
     }
     
     @GET
+    @Path("obtener-por-conductor/{idConductor}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Envio obtenerEnvioPorIdConductor(@PathParam("idConductor") int idConductor) {
+        if (idConductor > 0) {
+            return EnvioImp.obtenerEnvioPorConductor(idConductor);
+        }
+        throw new BadRequestException();
+    }
+    
+    @GET
     @Path("obtener-todos")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Envio> obtenerTodos() {

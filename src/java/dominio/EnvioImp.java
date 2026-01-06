@@ -43,6 +43,21 @@ public class EnvioImp {
         return envio;
     }
     
+    public static Envio obtenerEnvioPorConductor(int idConductor) {
+        SqlSession conexionBD = MyBatisUtil.getSession();
+        Envio envio = null;
+
+        if (conexionBD != null) {
+            try {
+                envio = conexionBD.selectOne("envio.obtener-envio-por-conductor",idConductor);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } 
+            conexionBD.close();
+        }
+        return envio;
+    }
+    
     public static Respuesta registrarEnvio(Envio envio) {
         Respuesta respuesta = new Respuesta();
         respuesta.setError(true);

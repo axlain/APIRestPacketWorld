@@ -37,7 +37,39 @@
         WHERE s.id_estatus_sucursal = 1
         ORDER BY s.id_sucursal;
     </select>
+    
+    <select id="obtener-por-id" parameterType="int" resultType="pojo.Sucursal">
+        SELECT 
+            s.id_sucursal AS idSucursal,
+            s.codigo AS codigo,
+            s.nombre_corto AS nombreCorto,
+            s.calle AS calle,
+            s.numero AS numero,
 
+            s.id_pais AS idPais,
+            p.nombre AS pais,
+
+            s.id_estado AS idEstado,
+            e.nombre AS estado,
+
+            s.id_municipio AS idMunicipio,
+            m.nombre AS municipio,
+
+            s.id_colonia AS idColonia,
+            c.nombre AS colonia,
+            c.codigo_postal AS codigoPostal,
+
+            s.id_estatus_sucursal AS idEstatusSucursal,
+            es.estatus AS estatusSucursal 
+
+        FROM sucursal AS s 
+        LEFT JOIN pais AS p ON s.id_pais = p.id_pais  
+        LEFT JOIN estado AS e ON s.id_estado = e.id_estado  
+        LEFT JOIN municipio AS m ON s.id_municipio = m.id_municipio  
+        LEFT JOIN colonia AS c ON s.id_colonia = c.id_colonia  
+        LEFT JOIN estatus_sucursal AS es ON s.id_estatus_sucursal = es.id_estatus_sucursal  
+        WHERE s.id_sucursal = #{idSucursal};
+    </select>
     
     <select id="obtener-maximo-consecutivo" parameterType="int" resultType="int">
         SELECT 
