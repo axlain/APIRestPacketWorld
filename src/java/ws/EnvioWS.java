@@ -43,6 +43,13 @@ public class EnvioWS {
     public List<Envio> obtenerTodos() {
         return EnvioImp.obtenerEnvios();
     }
+    
+    @GET
+    @Path("obtener-recibidos-sucursal")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Envio> obtenerEnviosRecibidosSucursal() {
+        return EnvioImp.obtenerEnviosRecibidosSucursal();
+    }
 
     @POST
     @Path("registrar")

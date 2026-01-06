@@ -8,6 +8,20 @@ import pojo.Paquete;
 import utilidades.Constantes;
 
 public class PaqueteImp {
+    
+    public static List<Paquete> obtenerTodos() {
+        SqlSession conexionBD = MyBatisUtil.getSession();
+        List<Paquete> paquetes = null;
+
+        if (conexionBD != null) {
+            try {
+                paquetes = conexionBD.selectList("paquete.obtener-todos");
+            } finally {
+                conexionBD.close();
+            }
+        }
+        return paquetes;
+    }
 
     public static List<Paquete> consultarPorEnvio(int idEnvio) {
         SqlSession conexion = MyBatisUtil.getSession();
@@ -135,13 +149,17 @@ public class PaqueteImp {
                 conexionBD.commit();
 
                 if (filasAfectadas > 0) {
-                    EnvioImp.actualizarCostoEnvio(idEnvio);
-
+                    try {
+                        EnvioImp.actualizarCostoEnvio(idEnvio);
+                        respuesta.setMensaje("Paquete eliminado correctamente y costo actualizado.");
+                    } catch (Exception ex) {
+                        respuesta.setMensaje("Paquete eliminado correctamente, pero no se pudo recalcular el costo: " + ex.getMessage());
+                    }
                     respuesta.setError(false);
-                    respuesta.setMensaje("Paquete eliminado correctamente y costo actualizado.");
                 } else {
                     respuesta.setMensaje("No se pudo eliminar el paquete.");
                 }
+
 
             } catch (Exception e) {
                 respuesta.setMensaje(Constantes.MSJ_ERROR_PAQUETES + e.getMessage());

@@ -36,11 +36,10 @@
             id_destinatario = #{idDestinatario},
             id_cliente = #{idCliente},
             id_sucursal = #{idSucursal},
-            id_conductor = #{idConductor},
-            id_estatus_actual = #{idEstatusActual}
+            id_conductor = #{idConductor}
         WHERE id_envio = #{idEnvio};
     </update>
-    
+
     <select id="verificar-existe" parameterType="int" resultType="int">
         SELECT COUNT(*)
         FROM envio
@@ -198,6 +197,79 @@
         WHERE id_conductor = #{idConductor}
           AND id_estatus_actual IN (1,2,3,4)
           AND id_envio != #{idEnvio}
+    </select>
+    
+    <select id="consultar-por-id" parameterType="int" resultType="pojo.Envio">
+        SELECT
+            e.id_envio            AS idEnvio,
+            e.numero_guia         AS numeroGuia,
+
+            e.id_destinatario     AS idDestinatario,
+            d.nombre              AS nombreDestinatario,
+            d.apellido_paterno    AS apellidoPaternoDestinatario,
+
+            e.id_cliente          AS idCliente,
+            c.nombre              AS nombreCliente,
+            c.apellido_paterno    AS apellidoPaternoCliente,
+
+            e.id_sucursal         AS idSucursal,
+            s.codigo              AS codigoSucursal,
+
+            e.id_conductor        AS idConductor,
+            cond.numero_personal  AS numeroPersonalConductor,
+
+            e.id_estatus_actual   AS idEstatusActual,
+            ee.nombre             AS estatusActual,
+
+            e.costo_total         AS costoTotal,
+
+            e.id_creador          AS idCreadoPor,
+            crea.numero_personal  AS numeroPersonalColaborador
+        FROM envio e
+        JOIN destinatario d        ON e.id_destinatario   = d.id_destinatario
+        JOIN cliente c             ON e.id_cliente        = c.id_cliente
+        JOIN sucursal s            ON e.id_sucursal       = s.id_sucursal
+        LEFT JOIN colaborador cond ON e.id_conductor      = cond.id_colaborador
+        JOIN colaborador crea      ON e.id_creador        = crea.id_colaborador
+        JOIN estatus_envio ee      ON e.id_estatus_actual = ee.id_estatus
+        WHERE e.id_envio = #{idEnvio};
+    </select>
+    
+    <select id="obtener-envios-recibidos-sucursal" resultType="pojo.Envio">
+        SELECT
+            e.id_envio            AS idEnvio,
+            e.numero_guia         AS numeroGuia,
+
+            e.id_destinatario     AS idDestinatario,
+            d.nombre              AS nombreDestinatario,
+            d.apellido_paterno    AS apellidoPaternoDestinatario,
+
+            e.id_cliente          AS idCliente,
+            c.nombre              AS nombreCliente,
+            c.apellido_paterno    AS apellidoPaternoCliente,
+
+            e.id_sucursal         AS idSucursal,
+            s.codigo              AS codigoSucursal,
+
+            e.id_conductor        AS idConductor,
+            cond.numero_personal  AS numeroPersonalConductor,
+
+            e.id_estatus_actual   AS idEstatusActual,
+            ee.nombre             AS estatusActual,
+
+            e.costo_total         AS costoTotal,
+
+            e.id_creador          AS idCreadoPor,
+            crea.numero_personal  AS numeroPersonalColaborador
+        FROM envio e
+        JOIN destinatario d        ON e.id_destinatario   = d.id_destinatario
+        JOIN cliente c             ON e.id_cliente        = c.id_cliente
+        JOIN sucursal s            ON e.id_sucursal       = s.id_sucursal
+        LEFT JOIN colaborador cond ON e.id_conductor      = cond.id_colaborador
+        JOIN colaborador crea      ON e.id_creador        = crea.id_colaborador
+        JOIN estatus_envio ee      ON e.id_estatus_actual = ee.id_estatus
+        WHERE e.id_estatus_actual = 1
+        ORDER BY e.id_envio DESC;
     </select>
 
 </mapper>

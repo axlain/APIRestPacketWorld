@@ -9,11 +9,11 @@ public class Paquete {
     private Double ancho;
     private Double profundidad;
     private Integer idEnvio; 
-
+    private String numeroGuia;
     public Paquete() {
     }
 
-    public Paquete(Integer idPaquete, String descripcion, Double peso, Double alto, Double ancho, Double profundidad, Integer idEnvio) {
+    public Paquete(Integer idPaquete, String descripcion, Double peso, Double alto, Double ancho, Double profundidad, Integer idEnvio, String numeroGuia) {
         this.idPaquete = idPaquete;
         this.descripcion = descripcion;
         this.peso = peso;
@@ -21,6 +21,7 @@ public class Paquete {
         this.ancho = ancho;
         this.profundidad = profundidad;
         this.idEnvio = idEnvio;
+        this.numeroGuia = numeroGuia;
     }
 
     public Integer getIdPaquete() {
@@ -51,6 +52,10 @@ public class Paquete {
         return alto;
     }
 
+    public String getNumeroGuia() {
+        return numeroGuia;
+    }
+
     public void setAlto(Double alto) {
         this.alto = alto;
     }
@@ -77,6 +82,10 @@ public class Paquete {
 
     public void setIdEnvio(Integer idEnvio) {
         this.idEnvio = idEnvio;
+    }
+
+    public void setNumeroGuia(String numeroGuia) {
+        this.numeroGuia = numeroGuia;
     }
     
     

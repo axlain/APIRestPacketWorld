@@ -129,29 +129,54 @@ public class ColaboradorImp {
 
         if (conexionBD != null) {
             try {
-                
+
                 // Verificar si el colaborador existe
                 String verificarColaborador = verificarColaboradorExiste(conexionBD, colaborador.getIdColaborador());
                 if (verificarColaborador != null) {
                     respuesta.setMensaje(verificarColaborador);
                     return respuesta;
                 }
-                
-                //validar tamaño de la curp
+
+                // ✅ 1) Obtener rol actual en BD
+                Integer rolActual = conexionBD.selectOne(
+                        "colaborador.obtener-rol-colaborador",
+                        colaborador.getIdColaborador()
+                );
+
+                if (rolActual == null) {
+                    respuesta.setMensaje("El colaborador no existe.");
+                    return respuesta;
+                }
+
+                // como colaborador.getIdRol() es int, aquí NO se compara con null
+                if (rolActual.intValue() != colaborador.getIdRol()) {
+                    respuesta.setMensaje("No se puede editar el rol del colaborador.");
+                    return respuesta;
+                }
+
+                // Fuerza rol real para evitar trampas
+                colaborador.setIdRol(rolActual);
+
+
+                // Validar tamaño de la curp
                 if (colaborador.getCurp() == null || colaborador.getCurp().length() != 18) {
                     respuesta.setMensaje("La CURP debe tener exactamente 18 caracteres.");
                     return respuesta;
                 }
-                
-                //valdiar el fromato de la curp
-                 String regexCurp = "^[A-Z]{4}\\d{6}[A-Z]{6}[A-Z0-9]{2}$";
+
+                // Validar formato de la curp
+                String regexCurp = "^[A-Z]{4}\\d{6}[A-Z]{6}[A-Z0-9]{2}$";
                 if (!colaborador.getCurp().toUpperCase().matches(regexCurp)) {
                     respuesta.setMensaje("La CURP ingresada no tiene un formato válido.");
                     return respuesta;
                 }
-                
-                //  Validar sucursal existente y activa
-                Integer estatusSucursal = conexionBD.selectOne("sucursal.obtener-estatus-sucursal", colaborador.getIdSucursal());
+
+                // Validar sucursal existente y activa
+                Integer estatusSucursal = conexionBD.selectOne(
+                        "sucursal.obtener-estatus-sucursal",
+                        colaborador.getIdSucursal()
+                );
+
                 if (estatusSucursal == null) {
                     respuesta.setMensaje("La sucursal indicada no existe.");
                     return respuesta;
@@ -164,9 +189,8 @@ public class ColaboradorImp {
                 // Validar CURP única (que no pertenezca a otro colaborador)
                 Integer curpExistente = conexionBD.selectOne("colaborador.verificar-curp", colaborador.getCurp());
                 if (curpExistente != null && curpExistente > 0) {
-                    // Verificar si la CURP pertenece a otro colaborador distinto
                     Integer idPorCurp = conexionBD.selectOne(
-                        "colaborador.obtener-id-por-curp", colaborador.getCurp()
+                            "colaborador.obtener-id-por-curp", colaborador.getCurp()
                     );
                     if (idPorCurp != null && idPorCurp != colaborador.getIdColaborador()) {
                         respuesta.setMensaje("La CURP ingresada ya está registrada por otro colaborador.");
@@ -174,20 +198,23 @@ public class ColaboradorImp {
                     }
                 }
 
-                // Validar número de licencia (solo si es conductor)
-                // y si proporcionó número de licencia
-                if (colaborador.getIdRol() == 3 && colaborador.getNumeroLicencia() != null && !colaborador.getNumeroLicencia().trim().isEmpty()) {
-                    Integer licenciaExistente = conexionBD.selectOne("colaborador.verificar-licencia", colaborador.getNumeroLicencia());
-                    if (licenciaExistente != null && licenciaExistente > 0) {
-                        // Verificar si pertenece a otro colaborador
-                        Integer idPorLicencia = conexionBD.selectOne(
-                            "colaborador.obtener-id-por-licencia", colaborador.getNumeroLicencia()
-                        );
-                        if (idPorLicencia != null && idPorLicencia != colaborador.getIdColaborador()) {
-                            respuesta.setMensaje("El número de licencia ya está asignado a otro conductor.");
-                            return respuesta;
+                // ✅ Validar número de licencia SOLO si el rol real es Conductor
+                if (rolActual == Constantes.ROL_CONDUCTOR) {
+                    if (colaborador.getNumeroLicencia() != null && !colaborador.getNumeroLicencia().trim().isEmpty()) {
+                        Integer licenciaExistente = conexionBD.selectOne("colaborador.verificar-licencia", colaborador.getNumeroLicencia());
+                        if (licenciaExistente != null && licenciaExistente > 0) {
+                            Integer idPorLicencia = conexionBD.selectOne(
+                                    "colaborador.obtener-id-por-licencia", colaborador.getNumeroLicencia()
+                            );
+                            if (idPorLicencia != null && idPorLicencia != colaborador.getIdColaborador()) {
+                                respuesta.setMensaje("El número de licencia ya está asignado a otro conductor.");
+                                return respuesta;
+                            }
                         }
                     }
+                } else {
+                    // opcional: si no es conductor, no guardar licencia
+                    colaborador.setNumeroLicencia(null);
                 }
 
                 // Ejecutar actualización
@@ -198,19 +225,22 @@ public class ColaboradorImp {
                     respuesta.setError(false);
                     respuesta.setMensaje(Constantes.MSJ_EXITO_ACTUALIZAR + Constantes.COLABORADOR + ".");
                 } else {
-                    respuesta.setMensaje(Constantes.MSJ_ERROR_ACTUALIZAR + Constantes.COLABORADOR + ".");
+                    // (opcional) mensaje más realista si no hubo cambios
+                    respuesta.setMensaje("No se realizaron cambios en la información del colaborador.");
                 }
 
             } catch (Exception e) {
                 respuesta.setMensaje("Error al editar el colaborador: " + e.getMessage());
-            } 
-            conexionBD.close();
+            } finally {
+                conexionBD.close();
+            }
         } else {
             respuesta.setMensaje(Constantes.MSJ_ERROR_BD);
         }
 
         return respuesta;
     }
+
     
     public static Respuesta eliminarColaborador(int idColaborador) {
         Respuesta respuesta = new Respuesta();

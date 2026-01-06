@@ -29,6 +29,25 @@ public class EnvioImp {
 
         return envios;
     }
+    
+    public static List<Envio> obtenerEnviosRecibidosSucursal() {
+        SqlSession conexionBD = MyBatisUtil.getSession();
+        List<Envio> envios = null;
+        if (conexionBD != null) {
+            try {
+                envios = conexionBD.selectList(
+                    "envio.obtener-envios-recibidos-sucursal"
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                conexionBD.close();
+            }
+        }
+
+        return envios;
+    }
+
     public static Envio consultarPorGuia(String numeroGuia) {
         SqlSession conexionBD = MyBatisUtil.getSession();
         Envio envio = null;
@@ -214,50 +233,81 @@ public class EnvioImp {
     public static Respuesta actualizarEnvio(Envio envio) {
         Respuesta respuesta = new Respuesta();
         respuesta.setError(true);
-        SqlSession conexionBD = MyBatisUtil.getSession();
 
+        SqlSession conexionBD = MyBatisUtil.getSession();
         if (conexionBD == null) {
             respuesta.setMensaje(Constantes.MSJ_ERROR_BD);
             return respuesta;
         }
 
         try {
-            Integer existeEnvio = conexionBD.selectOne(
-                    "envio.verificar-existe",
-                    envio.getIdEnvio()
-            );
+            // Validación básica
+            if (envio == null || envio.getIdEnvio() == null) {
+                respuesta.setMensaje("El id del envío es obligatorio.");
+                return respuesta;
+            }
+
+            // 1) Verificar que exista
+            Integer existeEnvio = conexionBD.selectOne("envio.verificar-existe", envio.getIdEnvio());
             if (existeEnvio == null || existeEnvio == 0) {
                 respuesta.setMensaje("El envío no existe.");
                 return respuesta;
             }
 
+            // 2) Consultar envío actual (para estatus real y guía real)
+            Envio envioActual = conexionBD.selectOne("envio.consultar-por-id", envio.getIdEnvio());
+            if (envioActual == null) {
+                respuesta.setMensaje("No se pudo obtener la información actual del envío.");
+                return respuesta;
+            }
+
+            // 3) Validar estatus permitido para edición
+            int estatusActual = envioActual.getIdEstatusActual();
+            if (estatusActual != 1 && estatusActual != 4) {
+                respuesta.setMensaje(
+                    "Solo se pueden editar envíos en estatus 'recibido en sucursal' o 'detenido'."
+                );
+                return respuesta;
+            }
+
+            // 4) Blindajes de seguridad:
+            // No permitir cambiar número de guía (aunque lo manden en el request)
+            envio.setNumeroGuia(envioActual.getNumeroGuia());
+
+            // No permitir cambiar estatus en edición (se cambia con el método especial)
+            envio.setIdEstatusActual(envioActual.getIdEstatusActual());
+
+            // 5) Actualizar
             int filas = conexionBD.update("envio.editar", envio);
-            conexionBD.commit();
 
             if (filas > 0) {
-                // Recalcular costo SOLO si hay paquetes
+                conexionBD.commit();
+
+                // 6) Recalcular costo SOLO si hay paquetes (tu lógica ya maneja el caso)
                 try {
                     actualizarCostoEnvio(envio.getIdEnvio());
                 } catch (Exception e) {
-                    System.out.println(
-                            "Advertencia: no se pudo recalcular el costo: " + e.getMessage()
-                    );
+                    System.out.println("Advertencia: no se pudo recalcular el costo: " + e.getMessage());
                 }
 
                 respuesta.setError(false);
                 respuesta.setMensaje(Constantes.MSJ_EXITO_ACTUALIZAR + " el envío.");
             } else {
+                conexionBD.rollback();
                 respuesta.setMensaje(Constantes.MSJ_ERROR_ACTUALIZAR + " el envío.");
             }
 
         } catch (Exception e) {
+            try { conexionBD.rollback(); } catch (Exception ex) { /* ignore */ }
             respuesta.setMensaje("Error al editar el envío: " + e.getMessage());
+            e.printStackTrace();
         } finally {
             conexionBD.close();
         }
 
         return respuesta;
     }
+
     
     public static Respuesta actualizarEstatusEnvio(Envio envioReq) {
         Respuesta respuesta = new Respuesta();
@@ -400,7 +450,7 @@ public class EnvioImp {
             List<Paquete> paquetes = conexionBD.selectList("paquete.consultar-por-envio", idEnvio);
 
             if (paquetes == null || paquetes.isEmpty()) {
-                throw new RuntimeException("No se puede calcular el costo: el envío no tiene paquetes.");
+                return 0.0;
             }
 
             int numPaquetes = paquetes.size();
@@ -424,6 +474,7 @@ public class EnvioImp {
             conexionBD.close();
         }
     }
+
     
     public static void actualizarCostoEnvio(int idEnvio) {
 
