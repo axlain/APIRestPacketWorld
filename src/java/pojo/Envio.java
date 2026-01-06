@@ -18,11 +18,12 @@ public class Envio {
     private Integer idCreadoPor;
     private String numeroPersonalColaborador; 
     private String estatusActual;
+    private String comentario;
 
     public Envio() {
     }
 
-    public Envio(Integer idEnvio, String numeroGuia, Integer idDestinatario, String nombreDestinatario, String apellidoPaternoDestinatario, Integer idCliente, String nombreCliente, String apellidoPaternoCliente, Integer idSucursal, String codigoSucursal, Integer idConductor, String numeroPersonalConductor, Integer idEstatusActual, double costoTotal, Integer idCreadoPor, String numeroPersonalColaborador, String estatusActual) {
+    public Envio(Integer idEnvio, String numeroGuia, Integer idDestinatario, String nombreDestinatario, String apellidoPaternoDestinatario, Integer idCliente, String nombreCliente, String apellidoPaternoCliente, Integer idSucursal, String codigoSucursal, Integer idConductor, String numeroPersonalConductor, Integer idEstatusActual, double costoTotal, Integer idCreadoPor, String numeroPersonalColaborador, String estatusActual, String comentario) {
         this.idEnvio = idEnvio;
         this.numeroGuia = numeroGuia;
         this.idDestinatario = idDestinatario;
@@ -40,9 +41,8 @@ public class Envio {
         this.idCreadoPor = idCreadoPor;
         this.numeroPersonalColaborador = numeroPersonalColaborador;
         this.estatusActual = estatusActual;
+        this.comentario = comentario;
     }
-
-    
 
     public Integer getIdEnvio() {
         return idEnvio;
@@ -111,6 +111,10 @@ public class Envio {
     public String getEstatusActual() {
         return estatusActual;
     }
+
+    public String getComentario() {
+        return comentario;
+    }
     
     public void setIdEnvio(Integer idEnvio) {
         this.idEnvio = idEnvio;
@@ -178,6 +182,10 @@ public class Envio {
 
     public void setEstatusActual(String estatusActual) {
         this.estatusActual = estatusActual;
+    }
+
+    public void setComentario(String comentario) {
+        this.comentario = comentario;
     }
 
 }

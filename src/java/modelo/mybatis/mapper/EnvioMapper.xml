@@ -3,7 +3,11 @@
 
 <mapper namespace="envio">
 
-    <insert id="registrar" parameterType="pojo.Envio">
+    <insert id="registrar"
+            parameterType="pojo.Envio"
+            useGeneratedKeys="true"
+            keyProperty="idEnvio"
+            keyColumn="id_envio">
         INSERT INTO envio (
             numero_guia,
             id_destinatario,
@@ -24,6 +28,7 @@
             #{idCreadoPor}
         )
     </insert>
+
 
     <update id="editar" parameterType="pojo.Envio">
         UPDATE envio

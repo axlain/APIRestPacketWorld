@@ -271,8 +271,6 @@ public class EnvioImp {
             respuesta.setMensaje("El estatus es obligatorio.");
             return respuesta;
         }
-
-        // Usaremos idCreadoPor como "quien hizo el cambio" (porque Envio no tiene otro campo)
         if (envioReq.getIdCreadoPor() == null) {
             respuesta.setMensaje("El colaborador (idCreadoPor) es obligatorio.");
             return respuesta;
@@ -281,6 +279,16 @@ public class EnvioImp {
         String numeroGuia = envioReq.getNumeroGuia().trim();
         int nuevoEstatus = envioReq.getIdEstatusActual();
         int idColaborador = envioReq.getIdCreadoPor();
+
+        // ===== Comentario SOLO desde Postman =====
+        String comentario = envioReq.getComentario();
+        comentario = (comentario == null) ? "" : comentario.trim();
+
+        // detenido(4) o cancelado(6) => comentario obligatorio
+        if ((nuevoEstatus == 4 || nuevoEstatus == 6) && comentario.isEmpty()) {
+            respuesta.setMensaje("El comentario es obligatorio cuando el envío está 'detenido' o 'cancelado'.");
+            return respuesta;
+        }
 
         SqlSession conexionBD = MyBatisUtil.getSession();
         if (conexionBD == null) {
@@ -315,8 +323,9 @@ public class EnvioImp {
                 respuesta.setMensaje("No se puede poner 'en tránsito' sin asignar un conductor.");
                 return respuesta;
             }
-            // 1) Update en envio
-            java.util.Map<String, Object> params = new java.util.HashMap<>();
+
+            // 1) Update envio
+            Map<String, Object> params = new HashMap<>();
             params.put("guia", numeroGuia);
             params.put("estatus", nuevoEstatus);
 
@@ -328,12 +337,12 @@ public class EnvioImp {
             }
             conexionBD.commit();
 
-            // 2) Insert historial (comentario desde Constantes)
+            // 2) Historial (comentario SOLO del usuario)
             HistorialEstatusEnvio historial = new HistorialEstatusEnvio();
             historial.setIdEnvio(envioActual.getIdEnvio());
             historial.setIdEstatus(nuevoEstatus);
             historial.setIdColaborador(idColaborador);
-            historial.setComentario(obtenerComentarioPorEstatus(nuevoEstatus));
+            historial.setComentario(comentario); // <-- NUNCA default
 
             Respuesta respHist = HistorialEnvioImp.registrarHistorialEnvio(historial);
 
@@ -353,18 +362,7 @@ public class EnvioImp {
 
         return respuesta;
     }
-    
-    private static String obtenerComentarioPorEstatus(int idEstatus) {
-        switch (idEstatus) {
-            case 1: return Constantes.HIST_ENVIO_REGISTRO_INICIAL;
-            case 2: return Constantes.HIST_ENVIO_PROCESADO;
-            case 3: return Constantes.HIST_ENVIO_EN_TRANSITO;
-            case 4: return Constantes.HIST_ENVIO_DETENIDO;
-            case 5: return Constantes.HIST_ENVIO_ENTREGADO;
-            case 6: return Constantes.HIST_ENVIO_CANCELADO;
-            default: return "Cambio de estatus del envío";
-        }
-    }
+
 
     private static boolean transicionPermitida(int estatusActual, int estatusNuevo) {
         // Estados finales
