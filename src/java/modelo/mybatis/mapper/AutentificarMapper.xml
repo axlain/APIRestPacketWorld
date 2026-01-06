@@ -52,6 +52,8 @@
             c.apellido_paterno AS apellidoPaterno,
             c.apellido_materno AS apellidoMaterno,
             c.numero_personal AS numeroPersonal,
+            c.curp AS curp,
+            c.numero_licencia AS numeroLicencia,
             c.correo AS correo,
             c.id_rol AS idRol,
 
