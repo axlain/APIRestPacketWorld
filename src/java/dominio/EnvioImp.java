@@ -13,6 +13,7 @@ import utilidades.Constantes;
 import utilidades.Distancia;
 
 public class EnvioImp {
+    
     public static List<Envio> obtenerEnvios() {
         SqlSession conexionBD = MyBatisUtil.getSession();
         List<Envio> envios = null;
@@ -43,19 +44,19 @@ public class EnvioImp {
         return envio;
     }
     
-    public static Envio obtenerEnvioPorConductor(int idConductor) {
+    public static List<Envio> obtenerEnviosPorConductor(int idConductor) {
         SqlSession conexionBD = MyBatisUtil.getSession();
-        Envio envio = null;
+        List<Envio> envios = null;
 
         if (conexionBD != null) {
             try {
-                envio = conexionBD.selectOne("envio.obtener-envio-por-conductor",idConductor);
+                envios = conexionBD.selectList("envio.obtener-envios-por-conductor",idConductor);
             } catch (Exception e) {
                 e.printStackTrace();
             } 
             conexionBD.close();
         }
-        return envio;
+        return envios;
     }
     
     public static Respuesta registrarEnvio(Envio envio) {

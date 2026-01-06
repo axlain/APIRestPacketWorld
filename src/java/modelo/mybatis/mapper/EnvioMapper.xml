@@ -113,7 +113,7 @@
         JOIN estatus_envio ee      ON e.id_estatus_actual = ee.id_estatus;
     </select>
 
-    <select id="obtener-envio-por-conductor" parameterType="int" resultType="pojo.Envio">
+    <select id="obtener-envios-por-conductor" parameterType="int" resultType="pojo.Envio">
         SELECT
             e.id_envio            AS idEnvio,
             e.numero_guia         AS numeroGuia,
