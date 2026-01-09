@@ -42,7 +42,13 @@ public class UnidadImp {
                     conexionBD.close();
                     return respuesta;
                 }
-
+                Integer existe = conexionBD.selectOne("unidad.existeVin", unidad.getVin());
+                if (existe != null && existe > 0) {
+                    respuesta.setMensaje("No se puede registrar la unidad. El VIN ya está registrado.");
+                    conexionBD.close();
+                    return respuesta;
+                }
+                
                 // Generar número interno
                 String numeroInternoGenerado = generarNumeroInterno(unidad.getAnio(), unidad.getVin());
                 if (numeroInternoGenerado == null) {

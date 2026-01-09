@@ -124,5 +124,9 @@
 
         ORDER BY u.id_unidad;
     </select>
+    
+    <select id="existeVin" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM unidad WHERE vin = #{vin}
+    </select>
 
 </mapper>
