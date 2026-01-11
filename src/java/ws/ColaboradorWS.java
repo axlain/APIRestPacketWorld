@@ -101,15 +101,35 @@ public class ColaboradorWS {
         }
     }
     
-    @Path("subir-foto/{idColaborador}")
-    @PUT
-    @Produces(MediaType.APPLICATION_JSON)
-    public Respuesta subirFoto(@PathParam("idColaborador")Integer idColaborador, byte[] foto){
-        if(idColaborador != null && idColaborador > 0 && foto.length > 0){
-            return ColaboradorImp.guardarFoto(idColaborador, foto);
+@PUT
+@Path("subir-foto/{idColaborador}")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+public Respuesta subirFoto(@PathParam("idColaborador") Integer idColaborador, String json){
+    try{
+        if(idColaborador == null || idColaborador <= 0){
+            throw new BadRequestException();
         }
-        throw new BadRequestException();
+
+        Gson gson = new Gson();
+        Colaborador colaborador = gson.fromJson(json, Colaborador.class);
+
+        if(colaborador == null || colaborador.getFotoBase64() == null || colaborador.getFotoBase64().trim().isEmpty()){
+            throw new BadRequestException();
+        }
+
+        byte[] foto = java.util.Base64.getDecoder().decode(colaborador.getFotoBase64());
+
+        if(foto == null || foto.length == 0){
+            throw new BadRequestException();
+        }
+
+        return ColaboradorImp.guardarFoto(idColaborador, foto);
+    } catch(Exception e){
+        throw new BadRequestException(e.getMessage());
     }
+}
+
             
     @Path("obtener-foto/{idColaborador}")
     @GET

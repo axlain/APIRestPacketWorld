@@ -28,9 +28,9 @@
             p.profundidad AS profundidad,
             p.id_envio AS idEnvio
         FROM paquete AS p
-        WHERE p.id_envio = #{idEnvio};
+        WHERE p.id_envio = #{value};
     </select>
-    
+
     <insert id="registrar" parameterType="pojo.Paquete">
         INSERT INTO paquete (
             descripcion,
@@ -62,19 +62,19 @@
 
     <delete id="eliminar" parameterType="int">
         DELETE FROM paquete
-        WHERE id_paquete = #{idPaquete};
+        WHERE id_paquete = #{value};
     </delete>
-    
+
     <select id="verificar-existe" parameterType="int" resultType="int">
         SELECT COUNT(*)
         FROM paquete
-        WHERE id_paquete = #{idPaquete};
+        WHERE id_paquete = #{value};
     </select>
-    
+
     <select id="obtener-id-envio" parameterType="int" resultType="int">
         SELECT id_envio
         FROM paquete
-        WHERE id_paquete = #{idPaquete};
+        WHERE id_paquete = #{value};
     </select>
 
 </mapper>
