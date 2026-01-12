@@ -211,6 +211,36 @@ public class ColaboradorImp {
                 } else {
                     colaborador.setNumeroLicencia(null);
                 }
+                
+                //Validación Conductor no puede cambiar sucursal si tiene unidad asignada
+                if (rolActual == Constantes.ROL_CONDUCTOR) {
+
+                    // Sucursal actual del conductor en BD
+                    Integer sucursalActual = conexionBD.selectOne(
+                            "colaborador.obtener-sucursal-colaborador",
+                            colaborador.getIdColaborador()
+                    );
+
+                    // Unidad asignada actualmente (NULL si no tiene)
+                    Integer unidadAsignada = conexionBD.selectOne(
+                            "colaborador.obtener-unidad-asignada",
+                            colaborador.getIdColaborador()
+                    );
+
+                    if (sucursalActual == null) {
+                        respuesta.setMensaje("No se pudo obtener la sucursal actual del colaborador.");
+                        return respuesta;
+                    }
+
+                    // Si intenta cambiar la sucursal y tiene unidad asignada => bloquear
+                    boolean quiereCambiarSucursal = sucursalActual.intValue() != colaborador.getIdSucursal();
+                    boolean tieneUnidadAsignada = (unidadAsignada != null);
+
+                    if (quiereCambiarSucursal && tieneUnidadAsignada) {
+                        respuesta.setMensaje("Para cambiar la sucursal del conductor, primero debe quedar sin una unidad asignada.");
+                        return respuesta;
+                    }
+                }
 
                 int filasAfectadas = conexionBD.update("colaborador.editar", colaborador);
                 conexionBD.commit();
