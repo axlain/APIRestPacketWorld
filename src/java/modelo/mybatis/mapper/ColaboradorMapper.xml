@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
 <mapper namespace="colaborador">
     
     <select id="obtener-todos" resultType="pojo.Colaborador">
@@ -112,7 +113,6 @@
         WHERE id_colaborador = #{idColaborador};
     </update>
     
-   
     <select id="tiene-unidad" parameterType="int" resultType="int">
         SELECT COUNT(*)
         FROM colaborador
@@ -120,7 +120,6 @@
           AND id_unidad IS NOT NULL;
     </select>
 
-    
     <select id="tiene-envios" parameterType="int" resultType="int">
         SELECT COUNT(*) 
         FROM envio  
@@ -189,6 +188,5 @@
         FROM colaborador
         WHERE id_colaborador = #{idColaborador};
     </select>
-
 
 </mapper>

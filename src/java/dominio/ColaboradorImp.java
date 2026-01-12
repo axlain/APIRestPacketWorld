@@ -120,116 +120,113 @@ public class ColaboradorImp {
     }
 
     public static Respuesta editarColaborador(Colaborador colaborador) {
-    Respuesta respuesta = new Respuesta();
-    respuesta.setError(true);
-    SqlSession conexionBD = MyBatisUtil.getSession();
+        Respuesta respuesta = new Respuesta();
+        respuesta.setError(true);
+        SqlSession conexionBD = MyBatisUtil.getSession();
 
-    if (conexionBD != null) {
-        try {
-            // Verificar si el colaborador existe
-            String verificarColaborador = verificarColaboradorExiste(conexionBD, colaborador.getIdColaborador());
-            if (verificarColaborador != null) {
-                respuesta.setMensaje(verificarColaborador);
-                return respuesta;
-            }
-
-            // ✅ 1) Obtener rol actual en BD (NO se permite cambiar rol)
-            Integer rolActual = conexionBD.selectOne(
-                    "colaborador.obtener-rol-colaborador",
-                    colaborador.getIdColaborador()
-            );
-
-            if (rolActual == null) {
-                respuesta.setMensaje("El colaborador no existe.");
-                return respuesta;
-            }
-
-            // Bloquear cambio de rol
-            if (rolActual.intValue() != colaborador.getIdRol()) {
-                respuesta.setMensaje("No se puede editar el rol del colaborador.");
-                return respuesta;
-            }
-
-            // Forzar rol real para evitar inconsistencias
-            colaborador.setIdRol(rolActual);
-
-            // Validar CURP
-            if (colaborador.getCurp() == null || colaborador.getCurp().length() != 18) {
-                respuesta.setMensaje("La CURP debe tener exactamente 18 caracteres.");
-                return respuesta;
-            }
-
-            String regexCurp = "^[A-Z]{4}\\d{6}[A-Z]{6}[A-Z0-9]{2}$";
-            if (!colaborador.getCurp().toUpperCase().matches(regexCurp)) {
-                respuesta.setMensaje("La CURP ingresada no tiene un formato válido.");
-                return respuesta;
-            }
-
-            // Validar sucursal existente y activa
-            Integer estatusSucursal = conexionBD.selectOne(
-                    "sucursal.obtener-estatus-sucursal",
-                    colaborador.getIdSucursal()
-            );
-
-            if (estatusSucursal == null) {
-                respuesta.setMensaje("La sucursal indicada no existe.");
-                return respuesta;
-            }
-            if (estatusSucursal != Constantes.ESTATUS_ACTIVO) {
-                respuesta.setMensaje("No se puede asignar una sucursal inactiva al colaborador.");
-                return respuesta;
-            }
-
-            // Validar CURP duplicada pero permitiendo la misma persona
-            Integer curpExistente = conexionBD.selectOne("colaborador.verificar-curp", colaborador.getCurp());
-            if (curpExistente != null && curpExistente > 0) {
-                Integer idPorCurp = conexionBD.selectOne("colaborador.obtener-id-por-curp", colaborador.getCurp());
-                if (idPorCurp != null && idPorCurp != colaborador.getIdColaborador()) {
-                    respuesta.setMensaje("La CURP ingresada ya está registrada por otro colaborador.");
+        if (conexionBD != null) {
+            try {
+                // Verificar si el colaborador existe
+                String verificarColaborador = verificarColaboradorExiste(conexionBD, colaborador.getIdColaborador());
+                if (verificarColaborador != null) {
+                    respuesta.setMensaje(verificarColaborador);
                     return respuesta;
                 }
-            }
 
-            // ✅ Validar número de licencia SOLO si el rol real es Conductor
-            if (rolActual == Constantes.ROL_CONDUCTOR) {
-                if (colaborador.getNumeroLicencia() != null && !colaborador.getNumeroLicencia().trim().isEmpty()) {
-                    Integer licenciaExistente = conexionBD.selectOne("colaborador.verificar-licencia", colaborador.getNumeroLicencia());
-                    if (licenciaExistente != null && licenciaExistente > 0) {
-                        Integer idPorLicencia = conexionBD.selectOne("colaborador.obtener-id-por-licencia", colaborador.getNumeroLicencia());
-                        if (idPorLicencia != null && idPorLicencia != colaborador.getIdColaborador()) {
-                            respuesta.setMensaje("El número de licencia ya está asignado a otro conductor.");
-                            return respuesta;
-                        }
+                // ✅ 1) Obtener rol actual en BD (NO se permite cambiar rol)
+                Integer rolActual = conexionBD.selectOne(
+                        "colaborador.obtener-rol-colaborador",
+                        colaborador.getIdColaborador()
+                );
+
+                if (rolActual == null) {
+                    respuesta.setMensaje("El colaborador no existe.");
+                    return respuesta;
+                }
+
+                // Bloquear cambio de rol
+                if (rolActual.intValue() != colaborador.getIdRol()) {
+                    respuesta.setMensaje("No se puede editar el rol del colaborador.");
+                    return respuesta;
+                }
+
+                // Forzar rol real para evitar inconsistencias
+                colaborador.setIdRol(rolActual);
+
+                // Validar CURP
+                if (colaborador.getCurp() == null || colaborador.getCurp().length() != 18) {
+                    respuesta.setMensaje("La CURP debe tener exactamente 18 caracteres.");
+                    return respuesta;
+                }
+
+                String regexCurp = "^[A-Z]{4}\\d{6}[A-Z]{6}[A-Z0-9]{2}$";
+                if (!colaborador.getCurp().toUpperCase().matches(regexCurp)) {
+                    respuesta.setMensaje("La CURP ingresada no tiene un formato válido.");
+                    return respuesta;
+                }
+
+                // Validar sucursal existente y activa
+                Integer estatusSucursal = conexionBD.selectOne(
+                        "sucursal.obtener-estatus-sucursal",
+                        colaborador.getIdSucursal()
+                );
+
+                if (estatusSucursal == null) {
+                    respuesta.setMensaje("La sucursal indicada no existe.");
+                    return respuesta;
+                }
+                if (estatusSucursal != Constantes.ESTATUS_ACTIVO) {
+                    respuesta.setMensaje("No se puede asignar una sucursal inactiva al colaborador.");
+                    return respuesta;
+                }
+
+                // Validar CURP duplicada pero permitiendo la misma persona
+                Integer curpExistente = conexionBD.selectOne("colaborador.verificar-curp", colaborador.getCurp());
+                if (curpExistente != null && curpExistente > 0) {
+                    Integer idPorCurp = conexionBD.selectOne("colaborador.obtener-id-por-curp", colaborador.getCurp());
+                    if (idPorCurp != null && idPorCurp != colaborador.getIdColaborador()) {
+                        respuesta.setMensaje("La CURP ingresada ya está registrada por otro colaborador.");
+                        return respuesta;
                     }
                 }
-            } else {
-                // si NO es conductor, no guardar licencia
-                colaborador.setNumeroLicencia(null);
-            }
 
-            int filasAfectadas = conexionBD.update("colaborador.editar", colaborador);
-            conexionBD.commit();
+                // Validar número de licencia SOLO si el rol real es Conductor
+                if (rolActual == Constantes.ROL_CONDUCTOR) {
+                    if (colaborador.getNumeroLicencia() != null && !colaborador.getNumeroLicencia().trim().isEmpty()) {
+                        Integer licenciaExistente = conexionBD.selectOne("colaborador.verificar-licencia", colaborador.getNumeroLicencia());
+                        if (licenciaExistente != null && licenciaExistente > 0) {
+                            Integer idPorLicencia = conexionBD.selectOne("colaborador.obtener-id-por-licencia", colaborador.getNumeroLicencia());
+                            if (idPorLicencia != null && idPorLicencia != colaborador.getIdColaborador()) {
+                                respuesta.setMensaje("El número de licencia ya está asignado a otro conductor.");
+                                return respuesta;
+                            }
+                        }
+                    }
+                } else {
+                    // si NO es conductor, no guardar licencia
+                    colaborador.setNumeroLicencia(null);
+                }
 
-            if (filasAfectadas > 0) {
-                respuesta.setError(false);
-                respuesta.setMensaje(Constantes.MSJ_EXITO_ACTUALIZAR + Constantes.COLABORADOR + ".");
-            } else {
-                respuesta.setMensaje("No se realizaron cambios en la información del colaborador.");
-            }
+                int filasAfectadas = conexionBD.update("colaborador.editar", colaborador);
+                conexionBD.commit();
 
-        } catch (Exception e) {
-            respuesta.setMensaje("Error al editar el colaborador: " + e.getMessage());
-        } finally {
+                if (filasAfectadas > 0) {
+                    respuesta.setError(false);
+                    respuesta.setMensaje(Constantes.MSJ_EXITO_ACTUALIZAR + Constantes.COLABORADOR + ".");
+                } else {
+                    respuesta.setMensaje("No se realizaron cambios en la información del colaborador.");
+                }
+
+            } catch (Exception e) {
+                respuesta.setMensaje("Error al editar el colaborador: " + e.getMessage());
+            } 
             conexionBD.close();
+        } else {
+            respuesta.setMensaje(Constantes.MSJ_ERROR_BD);
         }
-    } else {
-        respuesta.setMensaje(Constantes.MSJ_ERROR_BD);
+
+        return respuesta;
     }
-
-    return respuesta;
-}
-
-
     
     public static Respuesta eliminarColaborador(int idColaborador) {
         Respuesta respuesta = new Respuesta();
@@ -388,33 +385,63 @@ public class ColaboradorImp {
        return respuesta;
     }
     
- public static Colaborador obtenerFoto(int idColaborador){
-    Colaborador colaborador = null;
-    SqlSession conexionBD = MyBatisUtil.getSession();
-    
-    if(conexionBD != null){
-        try{
-            
-            String verificarColaborador = verificarColaboradorExiste(conexionBD, idColaborador);
-            if (verificarColaborador != null) {
-                return null;
-            }
-            
-            colaborador = conexionBD.selectOne("colaborador.obtener-foto", idColaborador);
-            
-            if(colaborador != null && colaborador.getFotoBase64() != null){
-                String fotoLimpia = colaborador.getFotoBase64().replaceAll("\\s+", "");
-                colaborador.setFotoBase64(fotoLimpia);
-            }
-            
-            conexionBD.close();
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-   } 
-    
-   return colaborador;
-}
+    public static Respuesta subirFoto(int idColaborador, byte[] foto){
+        Respuesta respuesta = new Respuesta();
+        respuesta.setError(true);
+        SqlSession conexionBD = MyBatisUtil.getSession();
+        
+        if(conexionBD != null){
+            try{
+                Colaborador colaborador = new Colaborador();
+                colaborador.setIdColaborador(idColaborador);
+                colaborador.setFoto(foto);
+                
+                int filasAfectadas = conexionBD.update("colaborador.guardar-foto", colaborador);
+                conexionBD.commit();
+                
+                if(filasAfectadas > 0){
+                    respuesta.setError(false);
+                    respuesta.setMensaje("La fotografía del colaborador(a) ha sido guardad éxiitosamente");
+                } else {
+                    respuesta.setMensaje("Lo sentimos la fotograía no se logro guardar");
+                }
+                conexionBD.close();
+            } catch (Exception e){
+               respuesta.setMensaje(e.getMessage());
+           }
+       } else {
+           respuesta.setMensaje(Constantes.MSJ_ERROR_BD);
+       }
+       return respuesta;
+    }
+
+    public static Colaborador obtenerFoto(int idColaborador){
+       Colaborador colaborador = null;
+       SqlSession conexionBD = MyBatisUtil.getSession();
+
+       if(conexionBD != null){
+           try{
+
+               String verificarColaborador = verificarColaboradorExiste(conexionBD, idColaborador);
+               if (verificarColaborador != null) {
+                   return null;
+               }
+
+               colaborador = conexionBD.selectOne("colaborador.obtener-foto", idColaborador);
+
+               if(colaborador != null && colaborador.getFotoBase64() != null){
+                   String fotoLimpia = colaborador.getFotoBase64().replaceAll("\\s+", "");
+                   colaborador.setFotoBase64(fotoLimpia);
+               }
+
+               conexionBD.close();
+           } catch (Exception e){
+               e.printStackTrace();
+           }
+      } 
+
+      return colaborador;
+   }
 
     private static String generarNumeroPersonal(String curp, String contrasena) {
         try {
