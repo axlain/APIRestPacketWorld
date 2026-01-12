@@ -128,5 +128,11 @@
     <select id="existeVin" parameterType="string" resultType="int">
         SELECT COUNT(*) FROM unidad WHERE vin = #{vin}
     </select>
+    <select id="obtener-sucursal-unidad" parameterType="int" resultType="int">
+        SELECT id_sucursal
+        FROM unidad
+        WHERE id_unidad = #{idUnidad};
+    </select>
+
 
 </mapper>

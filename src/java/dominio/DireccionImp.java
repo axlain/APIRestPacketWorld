@@ -20,6 +20,16 @@ public class DireccionImp {
 
         if (conexionBD != null) {
             try {
+                // 1) Validar si existe el CP
+                Integer existeCP = conexionBD.selectOne("direccion.validar-cp-existe", codigoPostal);
+
+                if (existeCP == null || existeCP == 0) {
+                    respuesta.setError(true);
+                    respuesta.setMensaje("No se encontró el CP " + codigoPostal);
+                    return respuesta;
+                }
+
+                // 2) Si existe, traer los datos
                 RSDatosCodigoPostal datos = conexionBD.selectOne("direccion.obtener-datos-por-cp", codigoPostal);
 
                 if (datos != null) {
@@ -27,6 +37,7 @@ public class DireccionImp {
                     datos.setMensaje("Datos encontrados.");
                     respuesta = datos;
                 } else {
+                    // Caso raro: existe el CP pero no devolvió datos (por joins / datos inconsistentes)
                     respuesta.setError(true);
                     respuesta.setMensaje("No se encontraron datos para el CP " + codigoPostal);
                 }
@@ -34,8 +45,9 @@ public class DireccionImp {
             } catch (Exception e) {
                 respuesta.setError(true);
                 respuesta.setMensaje("Error al consultar CP: " + e.getMessage());
+            } finally {
+                conexionBD.close();
             }
-            conexionBD.close();
         } else {
             respuesta.setError(true);
             respuesta.setMensaje(Constantes.MSJ_ERROR_BD);

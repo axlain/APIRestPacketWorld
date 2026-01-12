@@ -189,5 +189,23 @@
         WHERE numero_licencia = #{value};
     </select>
 
+    <select id="obtener-sucursal-colaborador" parameterType="int" resultType="int">
+        SELECT id_sucursal
+        FROM colaborador
+        WHERE id_colaborador = #{idColaborador};
+    </select>
+    
+    <select id="tiene-envios-activos" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM envio e
+        INNER JOIN estatus_envio ee
+            ON ee.id_estatus = e.id_estatus_actual
+        WHERE e.id_conductor = #{idColaborador}
+          AND ee.nombre NOT IN ('entregado', 'cancelado');
+    </select>
+
+
+
+
 
 </mapper>

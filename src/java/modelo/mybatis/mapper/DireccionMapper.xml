@@ -92,6 +92,12 @@
         WHERE id_colonia = #{idColonia}
         AND codigo_municipio = #{codigoMunicipio};
     </select>
+    <select id="validar-cp-existe" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM colonia
+        WHERE codigo_postal = #{codigoPostal};
+    </select>
+
 
 </mapper>
 

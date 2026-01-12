@@ -204,4 +204,20 @@ public class SucursalImp {
         );
         return estatus != null && estatus == Constantes.ESTATUS_INACTIVO;
     }
+    
+    public static List<Sucursal> buscarSucursal(String filtro) {
+        SqlSession conexionBD = MyBatisUtil.getSession();
+        List<Sucursal> lista = null;
+
+        if (conexionBD != null) {
+            try {
+                lista = conexionBD.selectList("sucursal.buscar-sucursal",filtro);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } 
+            conexionBD.close();
+        }
+
+        return lista;
+    }
 }

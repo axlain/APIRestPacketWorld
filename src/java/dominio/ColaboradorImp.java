@@ -333,36 +333,43 @@ public class ColaboradorImp {
                     respuesta.setMensaje(verificarColaboradorConductor);
                     return respuesta;
                 }
+                Integer enviosActivos = conexionBD.selectOne("colaborador.tiene-envios-activos", idColaborador);
+                if (enviosActivos != null && enviosActivos > 0) {
+                    respuesta.setMensaje("No se puede cambiar la unidad: el conductor tiene envíos en proceso.");
+                    return respuesta;
+                }
 
+
+                // Si idUnidad es null => desasignar
                 if (idUnidad == null) {
-                    Integer envios = conexionBD.selectOne("colaborador.tiene-envios", idColaborador);
-                    if (envios != null && envios > 0) {
-                        respuesta.setMensaje("No se puede desasignar al conductor porque tiene envíos registrados.");
-                        return respuesta;
-                    }
-
                     return desasignarUnidad(conexionBD, idColaborador);
                 }
-                
+
                 verificarColaboradorConductor = verificarUnidadActiva(conexionBD, idUnidad);
-                
                 if (verificarColaboradorConductor != null) {
                     respuesta.setMensaje(verificarColaboradorConductor);
+                    return respuesta;
+                }
+
+                // ✅ Validar misma sucursal ANTES de checar ocupado
+                String validacionSucursal = validarMismaSucursal(conexionBD, idColaborador, idUnidad);
+                if (validacionSucursal != null) {
+                    respuesta.setMensaje(validacionSucursal);
                     return respuesta;
                 }
 
                 Integer unidadActual = obtenerUnidadActual(conexionBD, idColaborador);
                 verificarColaboradorConductor = unidadEstaOcupadaPorOtro(conexionBD, idUnidad, unidadActual);
-                
                 if (verificarColaboradorConductor != null) {
                     respuesta.setMensaje(verificarColaboradorConductor);
                     return respuesta;
                 }
+
                 respuesta = asignarUnidadAConductor(conexionBD, idColaborador, idUnidad);
 
             } catch (Exception e) {
                 respuesta.setMensaje("Error al asignar unidad: " + e.getMessage());
-            } 
+            }
             conexionBD.close();
         } else {
             respuesta.setMensaje(Constantes.MSJ_ERROR_BD);
@@ -370,7 +377,18 @@ public class ColaboradorImp {
 
         return respuesta;
     }
-    
+
+    private static String validarMismaSucursal(SqlSession conexionBD, int idColaborador, int idUnidad) {
+        Integer sucursalConductor = conexionBD.selectOne("colaborador.obtener-sucursal-colaborador", idColaborador);
+        Integer sucursalUnidad = conexionBD.selectOne("unidad.obtener-sucursal-unidad", idUnidad);
+
+        if (sucursalConductor == null) return "No existe el conductor.";
+        if (sucursalUnidad == null) return "No existe la unidad.";
+        if (!sucursalConductor.equals(sucursalUnidad)) return "No se puede asignar la unidad: pertenece a otra sucursal.";
+        return null;
+    }
+
+
     public static List<Colaborador> buscarColaborador(String filtro) {
         SqlSession conexionBD = MyBatisUtil.getSession();
         List<Colaborador> lista = null;
@@ -597,6 +615,54 @@ public class ColaboradorImp {
         respuesta.setError(true);
 
         try {
+            // 1) Validar que sea conductor
+            Integer idRol = conexionBD.selectOne("colaborador.obtener-rol-colaborador", idColaborador);
+            if (idRol == null) {
+                respuesta.setMensaje("El colaborador no existe.");
+                return respuesta;
+            }
+            if (idRol != Constantes.ROL_CONDUCTOR) {
+                respuesta.setMensaje("Solo se puede asignar unidad a un conductor.");
+                return respuesta;
+            }
+
+            // 2) Validar que NO tenga envíos activos (solo bloquea si NO está entregado/cancelado)
+            Integer enviosActivos = conexionBD.selectOne("colaborador.tiene-envios-activos", idColaborador);
+            if (enviosActivos != null && enviosActivos > 0) {
+                respuesta.setMensaje("No se puede cambiar la unidad: el conductor tiene envíos en proceso.");
+                return respuesta;
+            }
+
+            // 3) Validar misma sucursal (conductor vs unidad)
+            Integer sucursalConductor = conexionBD.selectOne("colaborador.obtener-sucursal-colaborador", idColaborador);
+            Integer sucursalUnidad = conexionBD.selectOne("unidad.obtener-sucursal-unidad", idUnidad);
+
+            if (sucursalConductor == null) {
+                respuesta.setMensaje("No existe el conductor.");
+                return respuesta;
+            }
+            if (sucursalUnidad == null) {
+                respuesta.setMensaje("No existe la unidad.");
+                return respuesta;
+            }
+            if (!sucursalConductor.equals(sucursalUnidad)) {
+                respuesta.setMensaje("No se puede asignar la unidad: pertenece a otra sucursal.");
+                return respuesta;
+            }
+
+            // 4) Validar que la unidad no esté asignada a otro conductor (permitir si ya la tiene el mismo)
+            Integer unidadActual = conexionBD.selectOne("colaborador.obtener-unidad-asignada", idColaborador);
+
+            Integer ocupada = conexionBD.selectOne("colaborador.unidad-asignada-a-otro", idUnidad);
+            if (ocupada != null && ocupada > 0) {
+                // Si la unidad que quiere asignar es la misma que ya tiene, se permite
+                if (unidadActual == null || !unidadActual.equals(idUnidad)) {
+                    respuesta.setMensaje("No se puede asignar la unidad: ya está asignada a otro conductor.");
+                    return respuesta;
+                }
+            }
+
+            // 5) Actualizar
             Map<String, Object> params = new HashMap<>();
             params.put("idColaborador", idColaborador);
             params.put("idUnidad", idUnidad);
@@ -612,10 +678,13 @@ public class ColaboradorImp {
             }
 
         } catch (Exception e) {
+            conexionBD.rollback();
             respuesta.setMensaje("Error al asignar unidad: " + e.getMessage());
         }
 
         return respuesta;
     }
+
+
         
 }
