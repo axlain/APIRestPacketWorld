@@ -29,7 +29,6 @@
         )
     </insert>
 
-
     <update id="editar" parameterType="pojo.Envio">
         UPDATE envio
         SET
@@ -40,12 +39,13 @@
         WHERE id_envio = #{idEnvio};
     </update>
 
+    <!-- FIX: parameterType=int -> usar #{value} -->
     <select id="verificar-existe" parameterType="int" resultType="int">
         SELECT COUNT(*)
         FROM envio
-        WHERE id_envio = #{idEnvio};
+        WHERE id_envio = #{value};
     </select>
-    
+
     <select id="consultar" parameterType="string" resultType="pojo.Envio">
         SELECT
             e.id_envio            AS idEnvio,
@@ -152,30 +152,32 @@
         JOIN colaborador crea      ON e.id_creador        = crea.id_colaborador
         JOIN estatus_envio ee      ON e.id_estatus_actual = ee.id_estatus
 
-        WHERE e.id_conductor = #{idConductor}
+        WHERE e.id_conductor = #{value}
         ORDER BY e.id_envio DESC;
     </select>
-    
+
     <update id="actualizar-estatus" parameterType="map">
         UPDATE envio
         SET id_estatus_actual = #{estatus}
         WHERE numero_guia = #{guia};
     </update>
-    
+
+    <!-- FIX: parameterType=int -> usar #{value} -->
     <select id="obtener-cp-origen" parameterType="int" resultType="string">
         SELECT c.codigo_postal
         FROM envio e
         JOIN sucursal s ON e.id_sucursal = s.id_sucursal
         JOIN colonia c ON s.id_colonia = c.id_colonia
-        WHERE e.id_envio = #{idEnvio};
+        WHERE e.id_envio = #{value};
     </select>
-    
+
+    <!-- FIX: parameterType=int -> usar #{value} -->
     <select id="obtener-cp-destino" parameterType="int" resultType="string">
         SELECT c.codigo_postal
         FROM envio e
         JOIN destinatario d ON e.id_destinatario = d.id_destinatario
         JOIN colonia c ON d.id_colonia = c.id_colonia
-        WHERE e.id_envio = #{idEnvio};
+        WHERE e.id_envio = #{value};
     </select>
 
     <update id="actualizar-costo" parameterType="pojo.Envio">
@@ -183,14 +185,17 @@
         SET costo_total = #{costoTotal}
         WHERE id_envio = #{idEnvio};
     </update>
-    
+
+    <!-- FIX: parameterType=int -> usar #{value} -->
+    <!-- Verifica si el conductor ya tiene un envío ACTIVO -->
     <select id="conductor-tiene-envio-activo" parameterType="int" resultType="int">
         SELECT COUNT(*)
         FROM envio
-        WHERE id_conductor = #{idConductor}
+        WHERE id_conductor = #{value}
           AND id_estatus_actual IN (1,2,3,4);
     </select>
 
+    <!-- Para edición: evita contarse a sí mismo -->
     <select id="conductor-tiene-envio-activo-excepto" parameterType="map" resultType="int">
         SELECT COUNT(*)
         FROM envio
@@ -198,7 +203,7 @@
           AND id_estatus_actual IN (1,2,3,4)
           AND id_envio != #{idEnvio}
     </select>
-    
+
     <select id="consultar-por-id" parameterType="int" resultType="pojo.Envio">
         SELECT
             e.id_envio            AS idEnvio,
@@ -232,9 +237,9 @@
         LEFT JOIN colaborador cond ON e.id_conductor      = cond.id_colaborador
         JOIN colaborador crea      ON e.id_creador        = crea.id_colaborador
         JOIN estatus_envio ee      ON e.id_estatus_actual = ee.id_estatus
-        WHERE e.id_envio = #{idEnvio};
+        WHERE e.id_envio = #{value};
     </select>
-    
+
     <select id="obtener-envios-recibidos-sucursal" resultType="pojo.Envio">
         SELECT
             e.id_envio            AS idEnvio,
