@@ -113,7 +113,7 @@ public class ColaboradorWS {
     
     @Path("guardar-foto/{idColaborador}")
     @PUT
-    @Consumes(MediaType.APPLICATION_OCTET_STREAM)
+    
     @Produces(MediaType.APPLICATION_JSON)
     public Respuesta subirFoto(@PathParam("idColaborador")Integer idColaborador, byte[] foto){
         if(idColaborador != null && idColaborador > 0 && foto.length > 0){
