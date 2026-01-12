@@ -101,6 +101,16 @@ public class ColaboradorWS {
         }
     }
     
+    @GET
+    @Path("licencia-disponible")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Respuesta licenciaDisponible(@QueryParam("licencia") String licencia,@QueryParam("idColaborador") Integer idColaborador){
+        if (licencia == null || licencia.trim().isEmpty()) {
+            throw new BadRequestException("Licencia requerida");
+        }
+        return ColaboradorImp.licenciaDisponible(licencia.trim(), idColaborador);
+    }
+    
     @PUT
     @Path("subir-foto/{idColaborador}")
     @Consumes(MediaType.APPLICATION_JSON)

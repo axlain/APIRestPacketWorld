@@ -283,6 +283,41 @@ public class ColaboradorImp {
 
         return respuesta;
     }
+    
+    public static Respuesta licenciaDisponible(String licencia, Integer idColaboradorActual) {
+        Respuesta respuesta = new Respuesta();
+        respuesta.setError(true);
+
+        SqlSession conexionBD = MyBatisUtil.getSession();
+        if (conexionBD != null) {
+            try {
+                Integer existe = conexionBD.selectOne("colaborador.verificar-licencia", licencia);
+
+                if (existe == null || existe == 0) {
+                    respuesta.setError(false);
+                    respuesta.setMensaje("Disponible");
+                    return respuesta;
+                }
+
+                Integer idPorLicencia = conexionBD.selectOne("colaborador.obtener-id-por-licencia", licencia);
+
+                if (idColaboradorActual != null && idPorLicencia != null && idPorLicencia.equals(idColaboradorActual)) {
+                    respuesta.setError(false);
+                    respuesta.setMensaje("Disponible");
+                    return respuesta;
+                }
+
+                respuesta.setMensaje("El número de licencia ya está asignado a otro conductor.");
+            } catch (Exception e) {
+                respuesta.setMensaje("Error al validar licencia: " + e.getMessage());
+            } 
+            conexionBD.close();
+        } else {
+            respuesta.setMensaje(Constantes.MSJ_ERROR_BD);
+        }
+
+        return respuesta;
+    }
 
     public static Respuesta asignarUnidad(int idColaborador, Integer idUnidad) {
         Respuesta respuesta = new Respuesta();
