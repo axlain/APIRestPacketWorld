@@ -74,17 +74,18 @@ public class ColaboradorImp {
                     return respuesta;
                 }
 
-                if (colaborador.getIdRol() == 3) { 
+                if (colaborador.getIdRol() == Constantes.ROL_CONDUCTOR) {
                     if (colaborador.getNumeroLicencia() == null || colaborador.getNumeroLicencia().trim().isEmpty()) {
                         respuesta.setMensaje("Debe ingresar un número de licencia para los conductores.");
                         return respuesta;
                     }
-
-                    Integer existeLicencia = conexionBD.selectOne("colaborador.verificar-licencia", colaborador.getNumeroLicencia());
+                    String licencia = colaborador.getNumeroLicencia().trim();
+                    Integer existeLicencia = conexionBD.selectOne("colaborador.verificar-licencia", licencia);
                     if (existeLicencia != null && existeLicencia > 0) {
                         respuesta.setMensaje("Ya existe un conductor con el número de licencia ingresado.");
                         return respuesta;
                     }
+                    colaborador.setNumeroLicencia(licencia);
                 } else {
                     colaborador.setNumeroLicencia(null);
                 }
@@ -192,18 +193,22 @@ public class ColaboradorImp {
 
                 // Validar número de licencia SOLO si el rol real es Conductor
                 if (rolActual == Constantes.ROL_CONDUCTOR) {
-                    if (colaborador.getNumeroLicencia() != null && !colaborador.getNumeroLicencia().trim().isEmpty()) {
-                        Integer licenciaExistente = conexionBD.selectOne("colaborador.verificar-licencia", colaborador.getNumeroLicencia());
-                        if (licenciaExistente != null && licenciaExistente > 0) {
-                            Integer idPorLicencia = conexionBD.selectOne("colaborador.obtener-id-por-licencia", colaborador.getNumeroLicencia());
-                            if (idPorLicencia != null && idPorLicencia != colaborador.getIdColaborador()) {
-                                respuesta.setMensaje("El número de licencia ya está asignado a otro conductor.");
-                                return respuesta;
-                            }
+                    if (colaborador.getNumeroLicencia() == null || colaborador.getNumeroLicencia().trim().isEmpty()) {
+                        respuesta.setMensaje("Debe ingresar un número de licencia para los conductores.");
+                        return respuesta;
+                    }
+                    String licencia = colaborador.getNumeroLicencia().trim();
+                    Integer existeLicencia = conexionBD.selectOne("colaborador.verificar-licencia", licencia);
+                    if (existeLicencia != null && existeLicencia > 0) {
+                        Integer idPorLicencia = conexionBD.selectOne("colaborador.obtener-id-por-licencia", licencia);
+                        // Si esa licencia pertenece a OTRO colaborador, es duplicada
+                        if (idPorLicencia != null && idPorLicencia != colaborador.getIdColaborador()) {
+                            respuesta.setMensaje("El número de licencia ya está asignado a otro conductor.");
+                            return respuesta;
                         }
                     }
+                    colaborador.setNumeroLicencia(licencia);
                 } else {
-                    // si NO es conductor, no guardar licencia
                     colaborador.setNumeroLicencia(null);
                 }
 

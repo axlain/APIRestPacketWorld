@@ -34,11 +34,6 @@
         WHERE curp = #{curp};
     </select>
     
-    <select id="verificar-licencia" parameterType="string" resultType="int">
-        SELECT COUNT(*) 
-        FROM colaborador
-        WHERE numero_licencia = #{numeroLicencia};
-    </select>
     
     <insert id="registrar" parameterType="pojo.Colaborador">
         INSERT INTO colaborador (
@@ -57,12 +52,6 @@
         SELECT id_colaborador 
         FROM colaborador
         WHERE curp = #{curp};
-    </select>
-    
-    <select id="obtener-id-por-licencia" parameterType="string" resultType="int">
-        SELECT id_colaborador 
-        FROM colaborador
-        WHERE numero_licencia = #{numeroLicencia};
     </select>
     
     <update id="editar" parameterType="pojo.Colaborador">
@@ -188,5 +177,17 @@
         FROM colaborador
         WHERE id_colaborador = #{idColaborador};
     </select>
+    <select id="verificar-licencia" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM colaborador
+        WHERE numero_licencia = #{value};
+    </select>
+
+    <select id="obtener-id-por-licencia" parameterType="string" resultType="int">
+        SELECT id_colaborador
+        FROM colaborador
+        WHERE numero_licencia = #{value};
+    </select>
+
 
 </mapper>

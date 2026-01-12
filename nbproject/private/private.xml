@@ -3,18 +3,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/E:/Documentos/Integracion/vfinal/APIRestPacketWorld/src/java/modelo/mybatis/mapper/EnvioMapper.xml</file>
-            <file>file:/E:/Documentos/Integracion/vfinal/APIRestPacketWorld/src/java/ws/PaqueteWS.java</file>
-            <file>file:/E:/Documentos/Integracion/vfinal/APIRestPacketWorld/src/java/pojo/Colaborador.java</file>
-            <file>file:/E:/Documentos/Integracion/vfinal/APIRestPacketWorld/src/java/ws/EnvioWS.java</file>
-            <file>file:/E:/Documentos/Integracion/vfinal/APIRestPacketWorld/src/java/dominio/CatalogoImp.java</file>
-            <file>file:/E:/Documentos/Integracion/vfinal/APIRestPacketWorld/src/java/modelo/mybatis/mapper/PaqueteMapper.xml</file>
-            <file>file:/E:/Documentos/Integracion/vfinal/APIRestPacketWorld/src/java/modelo/mybatis/mapper/ColaboradorMapper.xml</file>
-            <file>file:/E:/Documentos/Integracion/vfinal/APIRestPacketWorld/src/java/dto/Respuesta.java</file>
-            <file>file:/E:/Documentos/Integracion/vfinal/APIRestPacketWorld/src/java/ws/ColaboradorWS.java</file>
-            <file>file:/E:/Documentos/Integracion/vfinal/APIRestPacketWorld/src/java/dominio/PaqueteImp.java</file>
-            <file>file:/E:/Documentos/Integracion/vfinal/APIRestPacketWorld/src/java/dominio/DestinatarioImp.java</file>
-            <file>file:/E:/Documentos/Integracion/vfinal/APIRestPacketWorld/src/java/pojo/Paquete.java</file>
+            <file>file:/C:/Users/alasn/Desktop/PacketWorld/APIRestPacketWorld/src/java/dominio/ColaboradorImp.java</file>
+            <file>file:/C:/Users/alasn/Desktop/PacketWorld/APIRestPacketWorld/src/java/modelo/mybatis/mapper/ColaboradorMapper.xml</file>
         </group>
     </open-files>
 </project-private>
