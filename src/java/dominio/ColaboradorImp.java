@@ -381,7 +381,7 @@ public class ColaboradorImp {
                     return respuesta;
                 }
 
-                // ✅ Validar misma sucursal ANTES de checar ocupado
+                //Validar misma sucursal ANTES de checar ocupado
                 String validacionSucursal = validarMismaSucursal(conexionBD, idColaborador, idUnidad);
                 if (validacionSucursal != null) {
                     respuesta.setMensaje(validacionSucursal);
@@ -489,7 +489,7 @@ public class ColaboradorImp {
                 
                 if(filasAfectadas > 0){
                     respuesta.setError(false);
-                    respuesta.setMensaje("La fotografía del colaborador(a) ha sido guardad éxiitosamente");
+                    respuesta.setMensaje("La fotografía del colaborador(a) ha sido guardada exitosamente");
                 } else {
                     respuesta.setMensaje("Lo sentimos la fotograía no se logro guardar");
                 }
