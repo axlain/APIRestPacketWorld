@@ -19,7 +19,14 @@ import pojo.Colaborador;
 
 @Path ("colaborador")
 public class ColaboradorWS {
-    
+    @Path("obtener/{idColaborador}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Colaborador obtenerPorId(@PathParam("idColaborador") Integer idColaborador){
+        if (idColaborador == null || idColaborador <= 0) throw new BadRequestException();
+        return ColaboradorImp.obtenerPorId(idColaborador);
+    }
+
     @Path ("obtener-todos")
     @GET 
     @Produces (MediaType.APPLICATION_JSON)
@@ -32,6 +39,16 @@ public class ColaboradorWS {
     @Produces (MediaType.APPLICATION_JSON)
     public List<Colaborador> obtenerConductoresr(){
          return ColaboradorImp.obtenerConductores();
+    }
+    
+    @Path ("obtener-conductores-sucursal")
+    @GET 
+    @Produces (MediaType.APPLICATION_JSON)
+    public List<Colaborador> obtenerConductores(@QueryParam("idSucursal") Integer idSucursal){
+        if (idSucursal != null && idSucursal > 0) {
+            return ColaboradorImp.obtenerConductoresPorSucursal(idSucursal);
+        }
+        return ColaboradorImp.obtenerConductores();
     }
     
     @Path("registrar")

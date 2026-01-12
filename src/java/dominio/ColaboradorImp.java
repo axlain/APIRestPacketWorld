@@ -43,7 +43,38 @@ public class ColaboradorImp {
 
         return conductores;
     }
-    
+    public static List<Colaborador> obtenerConductoresPorSucursal(int idSucursal) {
+        SqlSession conexionBD = MyBatisUtil.getSession();
+        List<Colaborador> conductores = null;
+
+        if (conexionBD != null) {
+            try {
+                conductores = conexionBD.selectList(
+                    "colaborador.obtener-conductores-por-sucursal",
+                    idSucursal
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                conexionBD.close();
+            }
+        }
+        return conductores;
+    }
+    public static Colaborador obtenerPorId(int idColaborador){
+        SqlSession conexionBD = MyBatisUtil.getSession();
+        Colaborador c = null;
+        if(conexionBD != null){
+            try{
+                c = conexionBD.selectOne("colaborador.obtener-por-id", idColaborador);
+            } finally {
+                conexionBD.close();
+            }
+        }
+        return c;
+    }
+
+
     public static Respuesta registrarColaborador(Colaborador colaborador) {
         Respuesta respuesta = new Respuesta();
         respuesta.setError(true);
