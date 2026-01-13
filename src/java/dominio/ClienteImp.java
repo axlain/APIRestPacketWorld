@@ -59,6 +59,31 @@ public class ClienteImp {
                 if (validacion.isError()) {
                     return validacion;  
                 }
+                
+                // Validar teléfono único
+String telefono = (cliente.getTelefono() != null) ? cliente.getTelefono().trim() : "";
+if (telefono.isEmpty()) {
+    respuesta.setMensaje("El teléfono es obligatorio.");
+    return respuesta;
+}
+
+Integer existeTel = conexion.selectOne("cliente.telefono-existe", telefono);
+if (existeTel != null && existeTel > 0) {
+    respuesta.setMensaje("El teléfono ya está registrado por otro cliente.");
+    return respuesta;
+}
+// Validar correo único
+String correo = (cliente.getCorreo() != null) ? cliente.getCorreo().trim() : "";
+if (correo.isEmpty()) {
+    respuesta.setMensaje("El correo es obligatorio.");
+    return respuesta;
+}
+
+Integer existeCorreo = conexion.selectOne("cliente.correo-existe", correo);
+if (existeCorreo != null && existeCorreo > 0) {
+    respuesta.setMensaje("El correo ya está registrado por otro cliente.");
+    return respuesta;
+}
 
                 int filasAfectadas = conexion.insert("cliente.registrar", cliente);
                 conexion.commit();
@@ -107,6 +132,37 @@ public class ClienteImp {
                 if (validacion.isError()) {
                     return validacion;  
                 }
+       String telefono = (cliente.getTelefono() != null) ? cliente.getTelefono().trim() : "";
+if (telefono.isEmpty()) {
+    respuesta.setMensaje("El teléfono es obligatorio.");
+    return respuesta;
+}
+
+java.util.HashMap<String, Object> params = new java.util.HashMap<>();
+params.put("telefono", telefono);
+params.put("idCliente", cliente.getIdCliente());
+
+Integer existeTelOtro = conexion.selectOne("cliente.telefono-existe-otro", params);
+if (existeTelOtro != null && existeTelOtro > 0) {
+    respuesta.setMensaje("El teléfono ya está registrado por otro cliente.");
+    return respuesta;
+}
+// Validar correo único (excepto el mismo cliente)
+String correo = (cliente.getCorreo() != null) ? cliente.getCorreo().trim() : "";
+if (correo.isEmpty()) {
+    respuesta.setMensaje("El correo es obligatorio.");
+    return respuesta;
+}
+
+java.util.HashMap<String, Object> paramsCorreo = new java.util.HashMap<>();
+paramsCorreo.put("correo", correo);
+paramsCorreo.put("idCliente", cliente.getIdCliente());
+
+Integer existeCorreoOtro = conexion.selectOne("cliente.correo-existe-otro", paramsCorreo);
+if (existeCorreoOtro != null && existeCorreoOtro > 0) {
+    respuesta.setMensaje("El correo ya está registrado por otro cliente.");
+    return respuesta;
+}
 
                 int filasAfectadas = conexion.update("cliente.editar", cliente);
                 conexion.commit();

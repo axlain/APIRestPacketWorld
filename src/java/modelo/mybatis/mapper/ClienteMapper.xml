@@ -168,5 +168,30 @@
         FROM envio
         WHERE id_cliente = #{idCliente};
     </select>
+    <select id="telefono-existe" parameterType="string" resultType="int">
+    SELECT COUNT(*)
+    FROM cliente
+    WHERE telefono = #{telefono};
+</select>
+
+<select id="telefono-existe-otro" parameterType="map" resultType="int">
+    SELECT COUNT(*)
+    FROM cliente
+    WHERE telefono = #{telefono}
+      AND id_cliente &lt;&gt; #{idCliente};
+</select>
+
+<select id="correo-existe" parameterType="string" resultType="int">
+    SELECT COUNT(*)
+    FROM cliente
+    WHERE correo = #{correo};
+</select>
+
+<select id="correo-existe-otro" parameterType="map" resultType="int">
+    SELECT COUNT(*)
+    FROM cliente
+    WHERE correo = #{correo}
+      AND id_cliente &lt;&gt; #{idCliente};
+</select>
 
 </mapper>
